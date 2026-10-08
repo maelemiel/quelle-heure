@@ -7,7 +7,7 @@
 <meta name="description" content="The world's most honest casino. One card for the hour (24 cards, one truth), a slot machine for the minutes, the croupier's dice for the seconds, a real roulette for your city. From €1. One free pull a day.">
 <meta name="theme-color" content="#0F3D2E">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎴</text></svg>">
-<link rel="stylesheet" href="style.css?v=11">
+<link rel="stylesheet" href="style.css?v=12">
 </head>
 <body>
 <a class="skip" href="#coffre">Skip to your table</a>
@@ -21,7 +21,8 @@
     <a href="#faq">house rules</a>
     <a href="about.html">about</a>
   </nav>
-  <button class="anim-toggle mono" id="anim-toggle" type="button" aria-pressed="false">ANIM: ON</button>
+  <button class="anim-toggle mono" id="anim-toggle" type="button" aria-pressed="false">Animations: ON</button>
+  <div class="marquee-tray" id="marquee-tray" aria-hidden="true"></div>
 </header>
 
 <main>
@@ -36,56 +37,68 @@
   <p class="note">The house always wins. So do you, technically. It is the same number every time.</p>
 </section>
 
-<section id="tables" class="wrap">
+<section id="tables" class="wrap wrap-narrow">
   <h2>The tables</h2>
   <p class="offer">Opening offer: the Complete Hand at <strong>€2.50</strong> instead of <s>€3.00</s>. Ends in <span class="mono" id="offer-timer">09:59</span> <span class="fine-inline">(the offer renews itself, just like time)</span></p>
-  <ul class="tables">
-    <li class="table-row">
-      <span class="t-name">The Deck of 24<span class="t-desc">one card decides your hour. there are exactly 24 cards, and exactly 24 hours. this is not a coincidence, it is pricing.</span></span>
-      <span class="t-price">€1.00</span>
+  <div class="rate-card">
+    <p class="rc-head mono">MAISON DU TEMPS · RATE CARD · THE HOUSE SELLS TIME</p>
+    <ul class="rc-rows">
+    <li class="rc-row">
+      <span class="rc-name">The Deck of 24<span class="rc-desc">one card decides your hour. there are exactly 24 cards, and exactly 24 hours. this is not a coincidence, it is pricing.</span></span>
+      <span class="rc-dots" aria-hidden="true"></span>
+        <span class="rc-price">€1.00</span>
       <button class="chip chip-s" type="button" data-buy="hour">TAKE A CARD</button>
     </li>
-    <li class="table-row">
-      <span class="t-name">The Slot Machine<span class="t-desc">the minutes. two reels, zero skill, one truth. the reels do not lie, they merely charge.</span></span>
-      <span class="t-price">€1.00</span>
+    <li class="rc-row">
+      <span class="rc-name">The Slot Machine<span class="rc-desc">the minutes. two reels, zero skill, one truth. the reels do not lie, they merely charge.</span></span>
+      <span class="rc-dots" aria-hidden="true"></span>
+        <span class="rc-price">€1.00</span>
       <button class="chip chip-s" type="button" data-buy="minutes">PULL</button>
     </li>
-    <li class="table-row">
-      <span class="t-name">The Croupier's Dice<span class="t-desc">the seconds. rolled fresh, before your very eyes. by your own browser, which knew everything all along.</span></span>
-      <span class="t-price">€1.00</span>
+    <li class="rc-row">
+      <span class="rc-name">The Croupier's Dice<span class="rc-desc">the seconds. rolled fresh, before your very eyes. by your own browser, which knew everything all along.</span></span>
+      <span class="rc-dots" aria-hidden="true"></span>
+        <span class="rc-price">€1.00</span>
       <button class="chip chip-s" type="button" data-buy="seconds">ROLL</button>
     </li>
-    <li class="table-row table-star">
-      <span class="t-name">The Complete Hand<span class="t-tag">BEST ODDS OF KNOWING</span><span class="t-desc">hour, minutes and seconds. all three games, dealt at once. save €0.50, reinvest in your future.</span></span>
-      <span class="t-price">€2.50 <s>€3.00</s></span>
+    <li class="rc-row rc-star">
+      <span class="rc-name">The Complete Hand<span class="t-tag">BEST ODDS OF KNOWING</span><span class="rc-desc">hour, minutes and seconds. all three games, dealt at once. save €0.50, reinvest in your future.</span></span>
+      <span class="rc-dots" aria-hidden="true"></span>
+        <span class="rc-price">€2.50 <s>€3.00</s></span>
       <button class="chip chip-s" type="button" data-buy="pack">TAKE THE HAND</button>
     </li>
-    <li class="table-row">
-      <span class="t-name">The Wheel of Fortune<span class="t-desc">one spin: the hour, the minutes, the seconds, or the city of your choice. sometimes nothing. odds published in the house rules.</span></span>
-      <span class="t-price">€0.50</span>
+    <li class="rc-row">
+      <span class="rc-name">The Wheel of Fortune<span class="rc-desc">one spin: the hour, the minutes, the seconds, or the city of your choice. sometimes nothing. odds published in the house rules.</span></span>
+      <span class="rc-dots" aria-hidden="true"></span>
+        <span class="rc-price">€0.50</span>
       <button class="chip chip-s" type="button" data-buy="roulette">SPIN</button>
     </li>
-    <li class="table-row">
-      <span class="t-name">The City Roulette<span class="t-desc">you pick the city, or the great wheel picks it for you among every timezone on Earth. the wheel is included, it.</span></span>
-      <span class="t-price">€1.00</span>
+    <li class="rc-row">
+      <span class="rc-name">The City Roulette<span class="rc-desc">you pick the city, or the great wheel picks it for you among every timezone on Earth. the wheel is included, it.</span></span>
+      <span class="rc-dots" aria-hidden="true"></span>
+        <span class="rc-price">€1.00</span>
       <button class="chip chip-s" type="button" data-buy="city">CHOOSE</button>
     </li>
-    <li class="table-row">
-      <span class="t-name">Unlimited Time<span class="t-desc">the subscription. the time, continuously, refreshes included. our engineers finally made it scroll.</span></span>
-      <span class="t-price">€9.99<span class="t-per">/mo</span></span>
+    <li class="rc-row">
+      <span class="rc-name">Unlimited Time<span class="rc-desc">the subscription. the time, continuously, refreshes included. our engineers finally made it scroll.</span></span>
+      <span class="rc-dots" aria-hidden="true"></span>
+        <span class="rc-price">€9.99<span class="t-per">/mo</span></span>
       <button class="chip chip-s" type="button" data-buy="unlimited">SUBSCRIBE</button>
     </li>
   </ul>
-  <p class="house-count mono">the house counts honestly: <strong id="buyers">0</strong> paying players · figures certified by Stripe</p>
+    <p class="rc-foot mono">the house counts honestly: <strong id="buyers">0</strong> paying players · figures certified by Stripe</p>
+  </div>
 </section>
 
-<section id="daily" class="wrap">
+<section id="daily" class="wrap wrap-narrow">
   <h2>The free pull</h2>
-  <p class="offer">One free pull per day. No stake, no purchase necessary. The house can afford one generous machine.</p>
   <div class="panel daily">
-    <div id="daily-reels" class="slot"></div>
-    <p><button class="chip chip-s" id="daily-spin" type="button">PULL, FREE</button></p>
-    <p class="fine mono" id="daily-status">published odds, because we are honest people: 50% nothing · 25% the hour · 15% hour + minutes · 10% the complete hand. winnings expire at midnight, like everything.</p>
+    <div class="machine">
+      <div class="coinslot" aria-hidden="true"></div>
+      <div class="slot" id="daily-reels"></div>
+      <button class="chip chip-s" id="daily-spin" type="button">PULL, FREE</button>
+    </div>
+    <p class="fine mono" id="daily-status">no stake, no purchase necessary, one pull a day. published odds: 50% nothing · 25% the hour · 15% hour + minutes · 10% the complete hand. winnings expire at midnight, like everything.</p>
   </div>
 </section>
 
@@ -189,7 +202,7 @@
   <p class="noscript">without JavaScript, time still passes. enjoy: it's free.</p>
 </noscript>
 
-<script src="config.js?v=11"></script>
-<script src="app.js?v=11"></script>
+<script src="config.js?v=12"></script>
+<script src="app.js?v=12"></script>
 </body>
 </html>

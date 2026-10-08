@@ -298,6 +298,16 @@
     if (btn) btn.addEventListener('click', spinDaily);
   }
 
+
+  function dropCoin(done) {
+    if (motionOff()) { done(); return; }
+    var m = $('.machine');
+    if (!m) { done(); return; }
+    var c = el('span', 'coin', '1');
+    m.appendChild(c);
+    setTimeout(function () { c.remove(); done(); }, 700);
+  }
+
   function spinDaily() {
     if (state.daily && state.daily.d === todayStr()) { toast(DAILY_JOKES.used); return; }
     var prize = weightedPrize();
@@ -323,7 +333,46 @@
       renderDailyStatus();
     }
 
-    dailySlot.run([finalGlyph, finalGlyph, finalGlyph], glyphs, settle);
+    dropCoin(function () {
+      dailySlot.run([finalGlyph, finalGlyph, finalGlyph], glyphs, settle);
+    });
+  }
+
+
+  /* ---------- Chip trays (presentation layer: owned / daily / ghost) ---------- */
+
+  function jetClass(key) {
+    if (state.owned[key]) return 'jet owned';
+    if (effectiveOwned(key)) return 'jet daily';
+    return 'jet ghost';
+  }
+
+  function trayLabel() {
+    var parts = [];
+    [['hour', 'hour'], ['minutes', 'minutes'], ['seconds', 'seconds']].forEach(function (p) {
+      var st = state.owned[p[0]] ? 'permanent' : (effectiveOwned(p[0]) ? 'daily until midnight' : 'not owned');
+      parts.push(p[1] + ': ' + st);
+    });
+    parts.push('city: ' + (state.owned.city ? 'owned' : 'not owned'));
+    if (state.owned.unlimited) parts.push('unlimited subscription');
+    return 'Your chips. ' + parts.join(', ') + '.';
+  }
+
+  function buildTray(host, compact) {
+    var tray = el('div', 'tray' + (compact ? ' tray-s' : ''));
+    tray.setAttribute('role', 'img');
+    tray.setAttribute('aria-label', trayLabel());
+    ['hour', 'minutes', 'seconds'].forEach(function (k) {
+      tray.appendChild(el('span', jetClass(k) + (compact ? ' jet-c' : ''), k === 'hour' ? 'H' : (k === 'minutes' ? 'M' : 'S')));
+    });
+    tray.appendChild(el('span', (state.owned.city ? 'jet owned' : 'jet ghost') + (compact ? ' jet-c' : ''), '📍'));
+    if (state.owned.unlimited) tray.appendChild(el('span', 'jet owned' + (compact ? ' jet-c' : ''), '∞'));
+    host.appendChild(tray);
+  }
+
+  function updateMarqueeTray() {
+    var mt = $('#marquee-tray');
+    if (mt) { mt.textContent = ''; buildTray(mt, true); }
   }
 
   /* ---------- Vault (your table) ---------- */
@@ -388,6 +437,7 @@
       if (state.owned.unlimited) {
         box.appendChild(el('p', 'fine', 'Unlimited player detected. The time itself is still sold separately.'));
       }
+      buildTray(box, false);
       var p = el('p'); p.style.marginTop = '1.2rem';
       var cta = el('a', 'chip chip-s', 'SEE THE TABLES');
       cta.href = '#tables';
@@ -404,6 +454,8 @@
       'Certified instant of purchase: ' +
       d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) +
       ' at ' + d.toLocaleTimeString('en-GB') + '. Non-modifiable (that is the point).'));
+
+    buildTray(box, false);
 
     var chosen = !!(state.owned.city && state.prefTz && state.prefTz === state.tz);
     var cityLine = el('p', 'coffre-city');
@@ -774,6 +826,7 @@
 
     save();
     render();
+    updateMarqueeTray();
     if (JOKES[item]) toast(JOKES[item]);
   }
 
@@ -819,12 +872,12 @@
     var off = false;
     try { off = localStorage.getItem('trn_noanim') === '1'; } catch (e) {}
     btn.setAttribute('aria-pressed', off ? 'true' : 'false');
-    btn.textContent = off ? 'ANIM: OFF' : 'ANIM: ON';
+    btn.textContent = off ? 'Animations: OFF' : 'Animations: ON';
     document.documentElement.classList.toggle('no-anim', off);
     btn.addEventListener('click', function () {
       var now = btn.getAttribute('aria-pressed') !== 'true';
       btn.setAttribute('aria-pressed', now ? 'true' : 'false');
-      btn.textContent = now ? 'ANIM: OFF' : 'ANIM: ON';
+      btn.textContent = now ? 'Animations: OFF' : 'Animations: ON';
       document.documentElement.classList.toggle('no-anim', now);
       try { localStorage.setItem('trn_noanim', now ? '1' : '0'); } catch (e) {}
     });
@@ -842,6 +895,7 @@
     initDaily();
     renderDailyStatus();
     render();
+    updateMarqueeTray();
     startFakeTimers();
 
     var u = new URLSearchParams(location.search).get('unlock');

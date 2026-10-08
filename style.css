@@ -466,3 +466,110 @@ h2::after {
   .fan .card { margin-left: -22px; }
   .card { width: 50px; }
 }
+
+/* ---------- rate card (the tables) ---------- */
+
+.wrap-narrow { max-width: 46rem; }
+.rate-card {
+  background: var(--felt-deep);
+  border: 1px solid var(--gold);
+  box-shadow: inset 0 0 0 4px var(--felt-deep), inset 0 0 0 5px rgba(232, 193, 112, .4);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.rc-head {
+  background: var(--surface);
+  border-bottom: 1px solid rgba(232, 193, 112, .5);
+  padding: .5rem 1.1rem;
+  font-size: .72rem; letter-spacing: .14em;
+  color: var(--muted);
+  text-align: center;
+}
+.rc-rows { list-style: none; }
+.rc-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  align-items: center; gap: .9rem;
+  padding: .9rem 1.1rem;
+  border-bottom: 1px solid rgba(232, 193, 112, .18);
+}
+.rc-row:last-child { border-bottom: 0; }
+.rc-star { background: var(--surface); border-left: 4px solid var(--gold); }
+.rc-name { font-weight: 700; font-size: 1.12rem; letter-spacing: .02em; }
+.rc-desc { display: block; font-weight: 400; font-size: .85rem; color: var(--muted); margin-top: .15rem; font-family: var(--sans); }
+.rc-dots {
+  width: clamp(1rem, 5vw, 3rem);
+  border-bottom: 2px dotted rgba(232, 193, 112, .5);
+  transform: translateY(.2em);
+}
+.rc-price { font-weight: 700; color: var(--gold); white-space: nowrap; font-size: 1.15rem; }
+.rc-price s { color: var(--muted); font-weight: 400; font-size: .85em; }
+.rc-foot {
+  padding: .6rem 1.1rem;
+  border-top: 1px solid rgba(232, 193, 112, .5);
+  font-size: .8rem; color: var(--muted); text-align: center;
+}
+.rc-foot strong { color: var(--gold); }
+
+/* ---------- daily machine (compact row + coin drop) ---------- */
+
+.machine {
+  display: flex; align-items: center; justify-content: center;
+  gap: 1.1rem; flex-wrap: wrap;
+  position: relative;
+  margin-bottom: .6rem;
+}
+.coinslot {
+  width: 26px; height: 42px;
+  border: 3px solid var(--gold);
+  border-radius: 6px;
+  background: var(--felt);
+  box-shadow: inset 0 0 8px rgba(11, 46, 34, .9);
+  position: relative;
+}
+.coinslot::after {
+  content: ''; position: absolute; left: 50%; top: 45%;
+  width: 14px; height: 3px;
+  transform: translateX(-50%);
+  background: rgba(232, 193, 112, .45);
+  border-radius: 2px;
+}
+.coin {
+  position: absolute; left: 3px; top: -34px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--gold); color: var(--ink);
+  border: 2px solid var(--ink);
+  display: grid; place-items: center;
+  font: 800 .62rem var(--sans);
+  animation: coinDrop .68s ease-in forwards;
+  z-index: 3;
+}
+@keyframes coinDrop {
+  0% { transform: translateY(0); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translateY(52px); opacity: 0; }
+}
+.daily .slot { margin: 0; }
+.daily .reel { width: 60px; height: 84px; font-size: 2rem; }
+
+/* ---------- chip trays ---------- */
+
+.marquee-tray { display: flex; gap: .3rem; align-items: center; }
+.tray { display: flex; gap: .55rem; justify-content: center; margin: .4rem 0 1rem; }
+.jet {
+  width: 46px; height: 46px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: var(--serif); font-weight: 700; font-size: 1.1rem;
+  border: 2px solid;
+}
+.jet.owned { background: var(--gold); color: var(--ink); border-color: var(--ink); box-shadow: inset 0 0 0 3px var(--gold), inset 0 0 0 4px rgba(28,20,3,.35); }
+.jet.daily { border-style: dashed; border-color: #D9968C; color: #F2B8B0; background: var(--felt-deep); }
+.jet.ghost { border-style: dotted; border-color: rgba(185, 205, 185, .4); color: rgba(185, 205, 185, .55); background: transparent; }
+.jet-c { width: 26px; height: 26px; font-size: .68rem; }
+
+@media (max-width: 40rem) {
+  .rc-row { grid-template-columns: 1fr auto; }
+  .rc-name { grid-column: 1 / -1; }
+  .rc-dots { display: none; }
+  .marquee-tray { display: none; }
+}
