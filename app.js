@@ -98,65 +98,6 @@
     toastTimer = setTimeout(function () { t.hidden = true; }, 4500);
   }
 
-  /* ---------- Starfield (decorative) ---------- */
-
-  function initStarfield() {
-    var c = document.getElementById('starfield');
-    if (!c || !c.getContext) return;
-    var ctx = c.getContext('2d');
-    var dpr = window.devicePixelRatio || 1;
-    var stars = [];
-    var W = 0, H = 0;
-
-    function make() {
-      stars = [];
-      var n = Math.round((W * H) / 9000);
-      for (var i = 0; i < n; i++) {
-        stars.push({
-          x: Math.random() * W,
-          y: Math.random() * H,
-          r: Math.random() * 1.3 + 0.3,
-          o: Math.random() * 0.55 + 0.25,
-          p: Math.random() * Math.PI * 2,
-          s: Math.random() * 0.9 + 0.35,
-          c: Math.random() < 0.08 ? '#F2C878' : (Math.random() < 0.08 ? '#7FE0CE' : '#EAF0FF')
-        });
-      }
-    }
-
-    function resize() {
-      W = window.innerWidth; H = window.innerHeight;
-      c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
-      c.style.width = W + 'px'; c.style.height = H + 'px';
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      make();
-      if (reduceMotion) draw(0);
-    }
-
-    function draw(t) {
-      ctx.clearRect(0, 0, W, H);
-      for (var i = 0; i < stars.length; i++) {
-        var st = stars[i];
-        var tw = reduceMotion ? st.o : st.o * (0.55 + 0.45 * Math.sin(t / 1000 * st.s + st.p));
-        ctx.globalAlpha = Math.max(0.05, tw);
-        ctx.fillStyle = st.c;
-        ctx.beginPath();
-        ctx.arc(st.x, st.y, st.r, 0, 6.2832);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-      if (!reduceMotion) requestAnimationFrame(draw);
-    }
-
-    var rT = null;
-    window.addEventListener('resize', function () {
-      clearTimeout(rT);
-      rT = setTimeout(resize, 150);
-    });
-    resize();
-    if (!reduceMotion) requestAnimationFrame(draw);
-  }
-
   /* ---------- Vault rendering ---------- */
 
   function render() {
@@ -547,7 +488,6 @@
     }
     var zc = $('#zone-count');
     if (zc) zc.textContent = ZONES.length;
-    initStarfield();
     render();
     startFakeTimers();
 

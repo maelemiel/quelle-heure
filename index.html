@@ -10,10 +10,6 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<canvas id="starfield" aria-hidden="true"></canvas>
-<div class="nebula nebula-1" aria-hidden="true"></div>
-<div class="nebula nebula-2" aria-hidden="true"></div>
-
 <a class="skip" href="#coffre">Skip to the time vault</a>
 
 <header class="topbar">
@@ -29,11 +25,12 @@
 
 <main>
 <section class="hero">
-  <div class="orrery" aria-hidden="true">
-    <div class="ring r1"><span class="planet"></span></div>
-    <div class="ring r2"><span class="planet"></span></div>
-    <div class="ring r3"><span class="planet"></span></div>
-    <div class="sun"></div>
+  <div class="dial" aria-hidden="true">
+    <div class="hand hh"></div>
+    <div class="hand mh"></div>
+    <div class="hand sh"></div>
+    <div class="cap"></div>
+    <div class="datewin">?</div>
   </div>
   <h1>What time is it?</h1>
   <p class="sub">The world's most consulted piece of information, finally at a fair price.</p>
@@ -140,6 +137,7 @@
 
 <footer class="site-foot">
   <p>QuelleHeure™ · Time is money. We cash in on both.</p>
+  <p>Swiss-grade timekeeping · Water-resistant to 3 ATM of hype.</p>
   <p>Parody website. In demo mode: no real payment, no data collected, no time wasted.</p>
   <p>© 2026 · All rights reserved, except the right to know the time for free.</p>
 </footer>
