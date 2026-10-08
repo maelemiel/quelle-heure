@@ -282,8 +282,11 @@ h2::after {
 .btn-block { width: 100%; margin-top: 1rem; }
 .btn.ok { background: var(--green); color: var(--ink); }
 
-/* ---------- About ---------- */
+/* ---------- About pages ---------- */
 
+.brand-link { color: inherit; text-decoration: none; }
+.foot-links a { color: var(--gold); text-decoration: none; }
+.foot-links a:hover { color: var(--gold-strong); text-decoration: underline; }
 .about-box {
   max-width: 680px; margin: 1.4rem auto 0;
   background: var(--surface);

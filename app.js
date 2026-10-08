@@ -593,7 +593,7 @@
     if (JOKES[item]) toast(JOKES[item]);
   }
 
-  /* ---------- Decorative timers ---------- */
+  /* ---------- Real counters + decorative timer ---------- */
 
   function startFakeTimers() {
     var offerEl = $('#offer-timer');
@@ -606,17 +606,17 @@
         offerEl.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
       }, 1000);
     }
+    /* Real number of processed payments, from /api/stats (Stripe). */
     var buyers = $('#buyers');
     if (buyers) {
-      var n = 1337;
-      buyers.textContent = n.toLocaleString('en-US');
-      (function tick() {
-        setTimeout(function () {
-          n += 1 + Math.floor(Math.random() * 3);
-          buyers.textContent = n.toLocaleString('en-US');
-          tick();
-        }, 25000 + Math.random() * 40000);
-      })();
+      var line = buyers.closest('p');
+      fetch('/api/stats')
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (j) {
+          if (j && typeof j.customers === 'number') buyers.textContent = j.customers.toLocaleString('en-US');
+          else if (line) line.hidden = true;
+        })
+        .catch(function () { if (line) line.hidden = true; });
     }
   }
 
