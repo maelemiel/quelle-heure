@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# QuelleHeure - Stripe setup (pure REST, no CLI flags needed)
+# Time Right Now - Stripe setup (pure REST, no CLI flags needed)
 # Creates products, prices, payment links (one-time + subscription),
-# enables email invoices, then wires the real URLs into config.js (demo -> false).
+# enables email invoices, then wires the real URLs into config.js.
 #
 # Usage:
 #   sandbox : STRIPE_API_KEY=sk_test_... ./setup-stripe.sh
@@ -70,7 +70,6 @@ for key, name, cents, desc, interval in ITEMS:
     print('%s -> %s' % (key, link['url']))
     src = re.sub(r"(%s:\s*)''" % key, r"\g<1>'%s'" % link['url'], src)
 
-src = re.sub(r"(  demo: )true", r"\g<1>false", src, count=1)
 open(CONFIG, 'w').write(src)
 print()
 print('config.js updated (demo: false). Publish it:')

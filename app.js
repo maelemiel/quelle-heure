@@ -1,19 +1,20 @@
-/* QuelleHeure(tm) - client logic: purchases, vault, timezone roulette, demo checkout, starfield. */
+/* Time Right Now(tm) - client logic: purchases, vault, timezone roulette, daily gamble.
+ * Deliberately minimal vanilla JS: no framework, no build, view source is the doc. */
 (function () {
   'use strict';
 
-  var CFG = window.QH_CONFIG || { demo: true, prices: {}, paymentLinks: {} };
+  var CFG = window.TRN_CONFIG || { prices: {}, paymentLinks: {} };
   var PRICES = CFG.prices || {};
   var LINKS = CFG.paymentLinks || {};
-  var STORE_KEY = 'quelleheure_state_v1';
+  var STORE_KEY = 'trn_state_v1';
 
   var ITEMS = {
-    hour:    { label: 'The Hour' },
-    minutes: { label: 'The Minutes' },
-    seconds: { label: 'The Seconds' },
-    pack:    { label: 'The Complete Pack (H + M + S)' },
-    city:    { label: 'The City of Your Choice' },
-    refresh: { label: 'The Time Refresh' },
+    hour:      { label: 'The Hour' },
+    minutes:   { label: 'The Minutes' },
+    seconds:   { label: 'The Seconds' },
+    pack:      { label: 'The Complete Pack (H + M + S)' },
+    city:      { label: 'The City of Your Choice' },
+    refresh:   { label: 'The Time Refresh' },
     unlimited: { label: 'Unlimited Time (subscription)' }
   };
 
@@ -64,7 +65,7 @@
     return { h: o.hour || '--', m: o.minute || '--', s: o.second || '--' };
   }
 
-  /* ---------- State ---------- */
+  /* ---------- State (localStorage) ---------- */
 
   function blank() { return { owned: {}, instant: null, tz: null, prefTz: null, daily: null }; }
   var state = blank();
@@ -89,6 +90,16 @@
   function priceOf(k) { return PRICES[k] || '1.00'; }
   function fmtPrice(k) { return '€' + priceOf(k); }
   function randomZone() { return ZONES[Math.floor(Math.random() * ZONES.length)]; }
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var toastTimer = null;
+  function toast(msg) {
+    var t = $('#toast');
+    t.textContent = msg;
+    t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.hidden = true; }, 4500);
+  }
 
   /* ---------- Daily gamble (free: no stake, expires at midnight) ---------- */
 
@@ -122,7 +133,6 @@
   function renderDailyStatus() {
     var token = $('#spin-token');
     var status = $('#daily-status');
-    var btn = $('#daily-spin');
     if (!token || !status) return;
     if (state.daily && state.daily.d === todayStr()) {
       token.textContent = state.daily.prize ? DAILY_TOKENS[state.daily.prize] : '∅';
@@ -130,7 +140,6 @@
       status.textContent = state.daily.prize
         ? 'Won today: ' + DAILY_TOKENS[state.daily.prize] + ', free until midnight. Next spin tomorrow.'
         : 'Gamble used today. It was nothing. Next spin tomorrow, midnight sharp.';
-      if (btn) btn.disabled = false;
     } else {
       token.textContent = '?';
       token.classList.remove('land');
@@ -142,8 +151,6 @@
     if (state.daily && state.daily.d === todayStr()) { toast(DAILY_JOKES.used); return; }
     var prize = weightedPrize();
     var token = $('#spin-token');
-    var btn = $('#daily-spin');
-    if (btn) btn.disabled = true;
 
     function settle() {
       state.daily = { d: todayStr(), prize: prize };
@@ -178,17 +185,6 @@
       if (delay < 380) setTimeout(step, delay);
       else setTimeout(settle, 250);
     })();
-  }
-
-  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  var toastTimer = null;
-  function toast(msg) {
-    var t = $('#toast');
-    t.textContent = msg;
-    t.hidden = false;
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { t.hidden = true; }, 4500);
   }
 
   /* ---------- Vault rendering ---------- */
@@ -381,56 +377,6 @@
     host.appendChild(wrap);
   }
 
-  /* ---------- Demo checkout ---------- */
-
-  var currentClose = null;
-
-  function demoCheckout(item) {
-    return new Promise(function (resolve) {
-      var ov = $('#checkout');
-      var form = $('#pay-form');
-      var btn = $('#pay-btn');
-      $('#checkout-item').textContent = ITEMS[item].label;
-      $('#checkout-amount').textContent = fmtPrice(item);
-      btn.disabled = false;
-      btn.classList.remove('ok');
-      btn.textContent = 'Pay ' + fmtPrice(item);
-      $('#checkout-note').hidden = !CFG.demo;
-      ov.hidden = false;
-      document.body.classList.add('noscroll');
-      var prev = document.activeElement;
-      setTimeout(function () { $('#card').focus(); }, 30);
-
-      function close(ok) {
-        ov.hidden = true;
-        document.body.classList.remove('noscroll');
-        form.reset();
-        currentClose = null;
-        form.onsubmit = null;
-        ov.onclick = null;
-        if (prev && prev.focus) { try { prev.focus(); } catch (e) {} }
-        resolve(ok);
-      }
-      currentClose = function () { close(false); };
-
-      form.onsubmit = function (ev) {
-        ev.preventDefault();
-        btn.disabled = true;
-        btn.textContent = 'Checking with the bank of time…';
-        setTimeout(function () {
-          btn.textContent = 'Payment accepted ✓';
-          btn.classList.add('ok');
-          setTimeout(function () { close(true); }, 850);
-        }, 1100);
-      };
-      ov.onclick = function (ev) { if (ev.target === ov) close(false); };
-    });
-  }
-
-  document.addEventListener('keydown', function (ev) {
-    if (ev.key === 'Escape' && currentClose) currentClose();
-  });
-
   /* ---------- Timezone roulette ---------- */
 
   function startRoulette(targetTz, done) {
@@ -490,11 +436,11 @@
   function buyFlow(item) {
     if (item === 'refresh' && state.owned.unlimited) { grant('refresh'); return; }
     var link = LINKS[item] || (item === 'refresh' ? LINKS.pack : '');
-    if (!CFG.demo && link) {
+    if (link) {
       window.location.href = link;
       return;
     }
-    demoCheckout(item).then(function (ok) { if (ok) grant(item); });
+    toast('Payments are being wired right now. Try again in a moment.');
   }
 
   function grant(item) {
@@ -584,10 +530,6 @@
   });
 
   function init() {
-    if (CFG.demo) {
-      var badge = $('[data-demo]');
-      if (badge) badge.hidden = false;
-    }
     var zc = $('#zone-count');
     if (zc) zc.textContent = ZONES.length;
     var spinBtn = $('#daily-spin');

@@ -3,25 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>QuelleHeure™: What time is it? (premium answer from €1.00)</title>
-<meta name="description" content="The time, finally at its fair price. €1 for the hour, €1 for the minutes, €1 for the seconds. Complete Pack €2.50. City of your choice €1, otherwise the world-timezone roulette.">
-<meta name="theme-color" content="#05070D">
+<title>Time Right Now™: what time is it? (premium answer from €1.00)</title>
+<meta name="description" content="The time, finally at its fair price. €1 for the hour, €1 for the minutes, €1 for the seconds. Complete Pack €2.50. City of your choice €1, otherwise the world-timezone roulette. One free daily gamble.">
+<meta name="theme-color" content="#0B0B0D">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏳</text></svg>">
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
 <a class="skip" href="#coffre">Skip to the time vault</a>
 
 <header class="topbar">
-  <p class="brand">QuelleHeure<span aria-hidden="true">™</span></p>
+  <p class="brand">Time Right Now<span aria-hidden="true">™</span></p>
   <nav aria-label="Primary">
     <a href="#tarifs">Pricing</a>
     <a href="#daily">Daily Gamble</a>
     <a href="#coffre">The Vault</a>
     <a href="#temoignages">Reviews</a>
     <a href="#faq">FAQ</a>
+    <a href="#about">About</a>
   </nav>
-  <p class="badge-demo" data-demo hidden>Demo mode</p>
 </header>
 
 <main>
@@ -150,38 +150,27 @@
     <summary>Do you offer a subscription?</summary>
     <p>Yes. "Unlimited Time" is live: €9.99/month, time refreshes included. Our engineers finally made it scroll.</p>
   </details>
+  <details>
+    <summary>Where does the money go?</summary>
+    <p>See About, just below. Short version: it funds ALLY, an accessibility project that does the opposite of this website.</p>
+  </details>
+</section>
+
+<section id="about" class="wrap">
+  <h2>About</h2>
+  <div class="about-box">
+    <p>Time Right Now is a parody with a real purpose. Every euro collected here funds <strong>ALLY</strong>, our accessibility project: ALLY audits real websites and helps fix them, so the web becomes usable for everyone. You buy the time; we give it back.</p>
+    <p class="fine">This site is also a deliberate coding exercise: minimal vanilla JavaScript, no framework, no build step, fully static, and accessibility-first (AAA/AA contrast, full keyboard navigation, reduced motion). View source is the documentation.</p>
+  </div>
 </section>
 </main>
 
 <footer class="site-foot">
-  <p>QuelleHeure™ · Time is money. We cash in on both.</p>
+  <p>Time Right Now™ · Time is money. We cash in on both.</p>
   <p>Swiss-grade timekeeping · Water-resistant to 3 ATM of hype.</p>
-  <p>Parody website. In demo mode: no real payment, no data collected, no time wasted.</p>
+  <p>All revenue funds ALLY, our accessibility project.</p>
   <p>© 2026 · All rights reserved, except the right to know the time for free.</p>
 </footer>
-
-<div class="modal" id="checkout" role="dialog" aria-modal="true" aria-labelledby="checkout-title" hidden>
-  <div class="modal-card">
-    <h3 id="checkout-title">Secure payment</h3>
-    <p class="checkout-line"><span id="checkout-item">Item</span> <strong class="mono" id="checkout-amount">€0.00</strong></p>
-    <form id="pay-form" novalidate>
-      <label for="card">Card number</label>
-      <input id="card" inputmode="numeric" autocomplete="off" placeholder="4242 4242 4242 4242" maxlength="19" value="4242 4242 4242 4242">
-      <div class="row">
-        <p>
-          <label for="exp">Expiry</label>
-          <input id="exp" inputmode="numeric" autocomplete="off" placeholder="12/34" maxlength="5" value="12/34">
-        </p>
-        <p>
-          <label for="cvc">CVC</label>
-          <input id="cvc" inputmode="numeric" autocomplete="off" placeholder="123" maxlength="4" value="123">
-        </p>
-      </div>
-      <button class="btn btn-gold btn-block" id="pay-btn" type="submit">Pay</button>
-    </form>
-    <p class="fine" id="checkout-note">Demo mode: the payment is fictional and your data never leaves this form (that's already a lot).</p>
-  </div>
-</div>
 
 <div class="roulette" id="roulette" role="dialog" aria-modal="true" aria-labelledby="roulette-title" hidden>
   <div class="roulette-box">
@@ -200,7 +189,7 @@
   <p class="noscript">Without JavaScript, time still passes. Enjoy: it's free.</p>
 </noscript>
 
-<script src="config.js?v=4"></script>
-<script src="app.js?v=4"></script>
+<script src="config.js?v=5"></script>
+<script src="app.js?v=5"></script>
 </body>
 </html>

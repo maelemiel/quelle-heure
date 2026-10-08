@@ -1,20 +1,12 @@
 /*
- * QuelleHeure - configuration
- *
- * demo: true  -> local fake checkout (no transaction, no data).
- * demo: false -> buttons open the Stripe Payment Links below.
- *
- * Generate all links at once (creates products, prices, links, wires this file):
+ * Time Right Now - configuration
+ * Prices + Stripe Payment Links. A button with a wired link navigates to
+ * Stripe's hosted checkout; after payment it redirects back with ?unlock=<item>.
+ * Regenerate and rewire all links:
  *   STRIPE_API_KEY=sk_test_... ./setup-stripe.sh   (sandbox)
- *   STRIPE_API_KEY=sk_live_... ./setup-stripe.sh   (live, restricted key recommended)
- * Each link redirects after payment to
- *   https://YOUR_DOMAIN/?unlock=hour|minutes|seconds|pack|city|unlimited
- * ("pack" also serves "Refresh the time" for non-subscribers;
- *  Unlimited subscribers refresh for free, client-side.)
- * A wired sandbox config is kept locally in config.local.js (gitignored).
+ *   STRIPE_API_KEY=rk_live_... ./setup-stripe.sh   (live, restricted key)
  */
-window.QH_CONFIG = {
-  demo: true,
+window.TRN_CONFIG = {
   prices: {
     hour:      '1.00',
     minutes:   '1.00',
@@ -25,12 +17,12 @@ window.QH_CONFIG = {
     unlimited: '9.99'
   },
   paymentLinks: {
-    hour:      '',
-    minutes:   '',
-    seconds:   '',
-    pack:      '',
-    city:      '',
+    hour:      'https://buy.stripe.com/test_28E5kE6oIfno7hw2Zc08g00',
+    minutes:   'https://buy.stripe.com/test_8x2bJ25kE4IK9pE6bo08g01',
+    seconds:   'https://buy.stripe.com/test_aFa4gAeVefno59o6bo08g02',
+    pack:      'https://buy.stripe.com/test_00wdRa4gA2AC1Xc1V808g03',
+    city:      'https://buy.stripe.com/test_4gM6oI3cw1wy7hw9nA08g04',
     refresh:   '',
-    unlimited: ''
+    unlimited: 'https://buy.stripe.com/test_fZu5kE3cw8Z0gS60R408g05'
   }
 };

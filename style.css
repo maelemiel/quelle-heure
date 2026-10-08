@@ -63,11 +63,6 @@ body.noscroll { overflow: hidden; }
 .topbar nav { display: flex; gap: 1.1rem; margin-left: auto; flex-wrap: wrap; }
 .topbar nav a { color: var(--muted); text-decoration: none; font-size: .9rem; text-transform: uppercase; letter-spacing: .08em; }
 .topbar nav a:hover { color: var(--text); }
-.badge-demo {
-  border: 1px solid var(--gold); color: var(--gold);
-  font-size: .72rem; padding: .15rem .6rem; border-radius: 999px; white-space: nowrap;
-  text-transform: uppercase; letter-spacing: .1em;
-}
 
 /* ---------- Hero + watch dial backdrop ---------- */
 
@@ -287,30 +282,15 @@ h2::after {
 .btn-block { width: 100%; margin-top: 1rem; }
 .btn.ok { background: var(--green); color: var(--ink); }
 
-/* ---------- Checkout modal ---------- */
+/* ---------- About ---------- */
 
-.modal { position: fixed; inset: 0; background: rgba(6, 6, 8, .82); display: grid; place-items: center; z-index: 100; padding: 1rem; }
-.modal[hidden] { display: none; }
-.modal-card {
-  background: var(--surface); border: 1px solid var(--line);
-  border-top: 3px solid var(--red-swiss);
-  border-radius: 10px; padding: 1.8rem; width: min(94vw, 420px);
+.about-box {
+  max-width: 680px; margin: 1.4rem auto 0;
+  background: var(--surface);
+  border: 1px solid var(--line); border-radius: 10px;
+  padding: 1.8rem 1.6rem;
 }
-.modal-card h3 { font-weight: 700; text-transform: uppercase; letter-spacing: .04em; margin-bottom: .6rem; }
-.checkout-line {
-  display: flex; justify-content: space-between; gap: 1rem; align-items: baseline;
-  background: var(--surface-2); padding: .6rem .9rem; border-radius: 6px;
-  margin-bottom: .4rem; font-size: .95rem;
-}
-#pay-form label { display: block; font-size: .8rem; color: var(--muted); margin: .7rem 0 .25rem; text-transform: uppercase; letter-spacing: .08em; }
-#pay-form input {
-  width: 100%; background: var(--bg); border: 1px solid var(--line);
-  border-radius: 6px; color: var(--text); padding: .65rem .8rem;
-  font-size: 1rem; font-family: var(--mono);
-}
-#pay-form input:focus { border-color: var(--gold); outline: none; }
-.row { display: flex; gap: .8rem; }
-.row p { flex: 1; }
+.about-box p strong { color: var(--gold); }
 
 /* ---------- Roulette ---------- */
 
