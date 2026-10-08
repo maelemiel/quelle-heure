@@ -1,4 +1,4 @@
-# QuelleHeure™
+# Time Right Now™
 
 Parody website, "troll but serious": you pay to know the time. Space-themed ("celestial atlas"), full English, accessibility-first.
 
