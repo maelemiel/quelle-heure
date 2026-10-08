@@ -51,6 +51,7 @@ ITEMS = [
 
 import re
 src = open(CONFIG).read()
+link_ver = os.environ.get('LINK_VER', 'v1')  # bump to recreate links (redirect URL is baked in and not updatable)
 
 for key, name, cents, desc, interval in ITEMS:
     prod = call('POST', '/products', {'name': name, 'description': desc}, 'qh-%s-prod-v1' % key)
@@ -67,7 +68,7 @@ for key, name, cents, desc, interval in ITEMS:
     # invoice_creation is not allowed with recurring prices (subscriptions invoice natively)
     if not interval:
         link_params['invoice_creation[enabled]'] = 'true'
-    link = call('POST', '/payment_links', link_params, 'qh-%s-link-%s' % (key, 'v2' if interval else 'v1'))
+    link = call('POST', '/payment_links', link_params, 'qh-%s-link-%s' % (key, link_ver))
     print('%s -> %s' % (key, link['url']))
     src = re.sub(r"(%s:\s*)''" % key, r"\g<1>'%s'" % link['url'], src)
 
