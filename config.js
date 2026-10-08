@@ -14,8 +14,11 @@ window.TRN_CONFIG = {
     pack:      '2.50',
     city:      '1.00',
     refresh:   '2.50',
-    unlimited: '9.99'
+    unlimited: '9.99',
+    roulette:  '0.50'
   },
+  /* Loot Roulette odds (percent weights, kept in sync with the FAQ copy) */
+  rouletteWeights: { hour: 25, minutes: 20, seconds: 15, city: 10, none: 30 },
   paymentLinks: {
     hour:      'https://buy.stripe.com/test_28E5kE6oIfno7hw2Zc08g00',
     minutes:   'https://buy.stripe.com/test_8x2bJ25kE4IK9pE6bo08g01',
@@ -23,6 +26,7 @@ window.TRN_CONFIG = {
     pack:      'https://buy.stripe.com/test_00wdRa4gA2AC1Xc1V808g03',
     city:      'https://buy.stripe.com/test_4gM6oI3cw1wy7hw9nA08g04',
     refresh:   '',
+    roulette:  'https://buy.stripe.com/test_dRm9AU9AUb7845kfLY08g06',
     unlimited: 'https://buy.stripe.com/test_fZu5kE3cw8Z0gS60R408g05'
   }
 };

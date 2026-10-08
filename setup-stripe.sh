@@ -45,6 +45,7 @@ ITEMS = [
     ('seconds',   'The Seconds',             100, 'The elite of time. Reserved for seasoned chronophiles.', ''),
     ('pack',      'The Complete Pack',       250, 'Hour, minutes and seconds, delivered in a single glance.', ''),
     ('city',      'The City of Your Choice', 100, 'You pick the timezone. Otherwise, the world roulette decides for you.', ''),
+    ('roulette',  'The Loot Roulette',        50, 'One spin: the hour, the minutes, the seconds, or the city of your choice. Sometimes nothing.', ''),
     ('unlimited', 'Unlimited Time',          999, 'The time, continuously. Refreshes included.', 'month'),
 ]
 
@@ -72,6 +73,6 @@ for key, name, cents, desc, interval in ITEMS:
 
 open(CONFIG, 'w').write(src)
 print()
-print('config.js updated (demo: false). Publish it:')
-print('  git add config.js && git commit -m "wire real Stripe payment links" && git push')
+print('config.js updated with all payment link URLs. Publish it:')
+print('  git add config.js && git commit -m "wire Stripe payment links" && git push')
 PY

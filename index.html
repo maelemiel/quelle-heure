@@ -7,7 +7,7 @@
 <meta name="description" content="The time, finally at its fair price. €1 for the hour, €1 for the minutes, €1 for the seconds. Complete Pack €2.50. City of your choice €1, otherwise the world-timezone roulette. One free daily gamble.">
 <meta name="theme-color" content="#0B0B0D">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏳</text></svg>">
-<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
 <a class="skip" href="#coffre">Skip to the time vault</a>
@@ -74,6 +74,12 @@
       <p class="price">€1.00</p>
       <p class="desc">You pick the timezone. Otherwise, the world roulette decides for you. The roulette comes included.</p>
       <button class="btn btn-ghost" type="button" data-buy="city">Choose my city</button>
+    </article>
+    <article class="card">
+      <h3>The Loot Roulette</h3>
+      <p class="price">€0.50</p>
+      <p class="desc">One spin: the hour, the minutes, the seconds, or the city of your choice. Sometimes nothing. Cheaper than certainty, exactly as random as your day.</p>
+      <button class="btn btn-ghost" type="button" data-buy="roulette">Spin the wheel</button>
     </article>
     <article class="card sub">
       <p class="subtag">Subscription</p>
@@ -151,6 +157,10 @@
     <p>Yes. "Unlimited Time" is live: €9.99/month, time refreshes included. Our engineers finally made it scroll.</p>
   </details>
   <details>
+    <summary>Is the Loot Roulette fair?</summary>
+    <p>Published odds, certified by ourselves: 25% the hour · 20% the minutes · 15% the seconds · 10% the city of your choice · 30% nothing. Winning something you already own counts as nothing. Transparency to a fault.</p>
+  </details>
+  <details>
     <summary>Where does the money go?</summary>
     <p>See About, just below. Short version: it funds ALLY, an accessibility project that does the opposite of this website.</p>
   </details>
@@ -174,11 +184,11 @@
 
 <div class="roulette" id="roulette" role="dialog" aria-modal="true" aria-labelledby="roulette-title" hidden>
   <div class="roulette-box">
-    <h3 id="roulette-title">Assigning your city</h3>
-    <p class="fine">Fair draw among the <span id="zone-count">400</span> timezones of the world. Randomness takes full responsibility.</p>
-    <p class="roulette-city" id="roulette-city" aria-live="off">…</p>
+    <h3 id="roulette-title"></h3>
+    <p class="fine" id="roulette-sub"></p>
+    <p class="roulette-city" id="roulette-city" aria-live="off"></p>
     <p class="roulette-time mono" id="roulette-time"></p>
-    <button class="btn btn-gold" id="roulette-accept" type="button" hidden>I accept this city</button>
+    <button class="btn btn-gold" id="roulette-accept" type="button" hidden></button>
     <p class="fine">Any complaint will be handled with the seriousness it deserves.</p>
   </div>
 </div>
@@ -189,7 +199,7 @@
   <p class="noscript">Without JavaScript, time still passes. Enjoy: it's free.</p>
 </noscript>
 
-<script src="config.js?v=5"></script>
-<script src="app.js?v=5"></script>
+<script src="config.js?v=6"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>

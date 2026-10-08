@@ -15,7 +15,8 @@
     pack:      { label: 'The Complete Pack (H + M + S)' },
     city:      { label: 'The City of Your Choice' },
     refresh:   { label: 'The Time Refresh' },
-    unlimited: { label: 'Unlimited Time (subscription)' }
+    unlimited: { label: 'Unlimited Time (subscription)' },
+    roulette:  { label: 'The Loot Roulette' }
   };
 
   var JOKES = {
@@ -379,30 +380,70 @@
 
   /* ---------- Timezone roulette ---------- */
 
-  function startRoulette(targetTz, done) {
-    var ov = $('#roulette');
-    var cityEl = $('#roulette-city');
-    var timeEl = $('#roulette-time');
-    var btn = $('#roulette-accept');
-    var prev = document.activeElement;
+  var LOOT_MAP = {
+    hour:    { glyph: 'H',  name: 'The Hour' },
+    minutes: { glyph: 'M',  name: 'The Minutes' },
+    seconds: { glyph: 'S',  name: 'The Seconds' },
+    city:    { glyph: '📍', name: 'The City of Your Choice' }
+  };
 
-    cityEl.classList.remove('land');
-    cityEl.setAttribute('aria-live', 'off');
-    cityEl.textContent = '…';
-    timeEl.textContent = '';
-    btn.hidden = true;
+  function pickLoot() {
+    var w = CFG.rouletteWeights || { hour: 25, minutes: 20, seconds: 15, city: 10, none: 30 };
+    var keys = ['hour', 'minutes', 'seconds', 'city', 'none'];
+    var total = 0;
+    keys.forEach(function (k) { total += w[k] || 0; });
+    if (!total) return 'none';
+    var r = Math.random() * total;
+    var acc = 0;
+    for (var i = 0; i < keys.length; i++) {
+      acc += w[keys[i]] || 0;
+      if (r < acc) return keys[i];
+    }
+    return 'none';
+  }
+
+  function wheelOpen() {
+    var ov = $('#roulette');
     ov.hidden = false;
     document.body.classList.add('noscroll');
+    return {
+      ov: ov,
+      title: $('#roulette-title'),
+      sub: $('#roulette-sub'),
+      city: $('#roulette-city'),
+      time: $('#roulette-time'),
+      btn: $('#roulette-accept'),
+      prev: document.activeElement
+    };
+  }
+
+  function wheelClose(w, done, arg) {
+    w.ov.hidden = true;
+    document.body.classList.remove('noscroll');
+    if (w.prev && w.prev.focus) { try { w.prev.focus(); } catch (e) {} }
+    if (done) done(arg);
+  }
+
+  function startRoulette(targetTz, done) {
+    var w = wheelOpen();
+    w.title.textContent = 'Assigning your city';
+    w.sub.textContent = 'Fair draw among the ' + ZONES.length + ' timezones of the world. Randomness takes full responsibility.';
+    w.btn.textContent = 'I accept this city';
+    w.city.classList.remove('land');
+    w.city.setAttribute('aria-live', 'off');
+    w.city.textContent = '…';
+    w.time.textContent = '';
+    w.btn.hidden = true;
 
     function finish() {
       var l = tzLabel(targetTz);
       var t = partsIn(targetTz, new Date());
-      cityEl.setAttribute('aria-live', 'polite');
-      cityEl.textContent = l.label;
-      cityEl.classList.add('land');
-      timeEl.textContent = t.h + ':' + t.m + ':' + t.s;
-      btn.hidden = false;
-      btn.focus();
+      w.city.setAttribute('aria-live', 'polite');
+      w.city.textContent = l.label;
+      w.city.classList.add('land');
+      w.time.textContent = t.h + ':' + t.m + ':' + t.s;
+      w.btn.hidden = false;
+      w.btn.focus();
     }
 
     if (reduceMotion) {
@@ -415,21 +456,59 @@
         i++;
         var l = tzLabel(z);
         var t = partsIn(z, new Date());
-        cityEl.textContent = l.label;
-        timeEl.textContent = t.h + ':' + t.m + ':' + t.s;
+        w.city.textContent = l.label;
+        w.time.textContent = t.h + ':' + t.m + ':' + t.s;
         delay *= 1.09;
         if (delay < 430) setTimeout(step, delay);
         else setTimeout(finish, 350);
       })();
     }
 
-    btn.onclick = function () {
-      ov.hidden = true;
-      document.body.classList.remove('noscroll');
-      if (prev && prev.focus) { try { prev.focus(); } catch (e) {} }
-      if (done) done();
-    };
+    w.btn.onclick = function () { wheelClose(w, done); };
   }
+
+  function startLootWheel(done) {
+    var outcome = pickLoot();
+    var dup = outcome !== 'none'
+      ? (outcome === 'city' ? !!state.owned.city : !!state.owned[outcome])
+      : false;
+    var w = wheelOpen();
+    w.title.textContent = 'Spinning the Loot Roulette';
+    w.sub.textContent = '€0.50 of pure anticipation. Odds published in the FAQ, certified by ourselves.';
+    w.btn.textContent = 'Collect';
+    w.city.classList.remove('land');
+    w.city.setAttribute('aria-live', 'off');
+    w.time.textContent = '';
+    w.btn.hidden = true;
+
+    function finish() {
+      w.city.setAttribute('aria-live', 'polite');
+      w.city.textContent = outcome === 'none'
+        ? '∅ · Nothing'
+        : LOOT_MAP[outcome].glyph + ' · ' + LOOT_MAP[outcome].name + (dup ? ' (again)' : '');
+      w.city.classList.add('land');
+      w.btn.hidden = false;
+      w.btn.focus();
+    }
+
+    if (reduceMotion) {
+      finish();
+    } else {
+      var glyphs = ['H', 'M', 'S', '📍', '∅'];
+      var i = Math.floor(Math.random() * glyphs.length);
+      var delay = 55;
+      (function step() {
+        w.city.textContent = glyphs[i % glyphs.length];
+        i++;
+        delay *= 1.11;
+        if (delay < 390) setTimeout(step, delay);
+        else setTimeout(finish, 250);
+      })();
+    }
+
+    w.btn.onclick = function () { wheelClose(w, done, dup ? 'dup:' + outcome : outcome); };
+  }
+
 
   /* ---------- Purchases ---------- */
 
@@ -444,6 +523,25 @@
   }
 
   function grant(item) {
+    if (item === 'roulette') {
+      startLootWheel(function (outcome) {
+        if (outcome === 'none') {
+          save();
+          render();
+          toast('The wheel says: nothing. The time remains €1.00. The wheel is sorry.');
+          return;
+        }
+        if (outcome.indexOf('dup:') === 0) {
+          var d = outcome.slice(4);
+          save();
+          render();
+          toast('The wheel gave you ' + ITEMS[d].label + '. You already had it. The wheel apologizes and keeps the €0.50.');
+          return;
+        }
+        grant(outcome);
+      });
+      return;
+    }
     if (item === 'pack') {
       state.owned.hour = true;
       state.owned.minutes = true;
@@ -530,8 +628,6 @@
   });
 
   function init() {
-    var zc = $('#zone-count');
-    if (zc) zc.textContent = ZONES.length;
     var spinBtn = $('#daily-spin');
     if (spinBtn) spinBtn.addEventListener('click', spinDaily);
     renderDailyStatus();
@@ -539,7 +635,7 @@
     startFakeTimers();
 
     var u = new URLSearchParams(location.search).get('unlock');
-    var valid = { hour: 1, minutes: 1, seconds: 1, pack: 1, city: 1, refresh: 1, unlimited: 1 };
+    var valid = { hour: 1, minutes: 1, seconds: 1, pack: 1, city: 1, refresh: 1, unlimited: 1, roulette: 1 };
     if (u && valid[u]) {
       grant(u);
       try { history.replaceState(null, '', location.pathname); } catch (e) {}
