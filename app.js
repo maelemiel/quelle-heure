@@ -244,7 +244,7 @@
         btn.type = 'button';
         btn.setAttribute('data-buy', key);
         btn.setAttribute('aria-label', 'Unlock ' + ITEMS[key].label.toLowerCase() + ' for ' + fmtPrice(key));
-        btn.appendChild(el('span', 'digits', '••'));
+        btn.appendChild(el('span', 'digits', '▓▓'));
         btn.appendChild(el('span', 'unit', unit));
         btn.appendChild(el('span', 'lock', '🔒 ' + fmtPrice(key)));
         disp.appendChild(btn);
@@ -609,7 +609,7 @@
     /* Real number of processed payments, from /api/stats (Stripe). */
     var buyers = $('#buyers');
     if (buyers) {
-      var line = buyers.closest('p');
+      var line = buyers.closest('p, .r-total');
       fetch('/api/stats')
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (j) {

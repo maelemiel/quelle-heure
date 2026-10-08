@@ -5,133 +5,124 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Time Right Now™: what time is it? (premium answer from €1.00)</title>
 <meta name="description" content="The time, finally at its fair price. €1 for the hour, €1 for the minutes, €1 for the seconds. Complete Pack €2.50. City of your choice €1, otherwise the world-timezone roulette. One free daily gamble.">
-<meta name="theme-color" content="#0B0B0D">
+<meta name="theme-color" content="#0d1117">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏳</text></svg>">
-<link rel="stylesheet" href="style.css?v=7">
+<link rel="stylesheet" href="style.css?v=8">
 </head>
 <body>
-<a class="skip" href="#coffre">Skip to the time vault</a>
+<a class="skip" href="#coffre">Skip to the answer</a>
 
-<header class="topbar">
-  <p class="brand">Time Right Now<span aria-hidden="true">™</span></p>
-  <nav aria-label="Primary">
-    <a href="#tarifs">Pricing</a>
-    <a href="#daily">Daily Gamble</a>
-    <a href="#coffre">The Vault</a>
-    <a href="#temoignages">Reviews</a>
-    <a href="#faq">FAQ</a>
-    <a href="about.html">About</a>
+<header class="bar">
+  <p class="bar-brand"><a href="#top">[trn] what-time-is-it<span aria-hidden="true">*</span></a></p>
+  <nav class="bar-nav" aria-label="Primary">
+    <a href="#tarifs">pricing</a>
+    <a href="#daily">daily</a>
+    <a href="#coffre">vault</a>
+    <a href="#faq">man</a>
+    <a href="about.html">about</a>
   </nav>
+  <p class="bar-right mono" aria-hidden="true">v1.0</p>
 </header>
 
-<main>
-<section class="hero">
-  <div class="dial" aria-hidden="true">
-    <div class="hand hh"></div>
-    <div class="hand mh"></div>
-    <div class="hand sh"></div>
-    <div class="cap"></div>
-    <div class="datewin">?</div>
-  </div>
-  <h1>What time is it?</h1>
-  <p class="sub">The world's most consulted piece of information, finally at a fair price.</p>
-  <p class="tease">Spoiler: the time is right behind this text. It's not going anywhere.</p>
-  <p><a class="btn btn-gold" href="#tarifs">I want to know · from €1.00</a></p>
-  <p class="note">Satisfaction guaranteed or your time back* &nbsp;*see our single-article Terms: time is non-refundable.</p>
+<main id="top">
+<section class="hero terminal" aria-label="Intro">
+  <h1 class="t-line"><span class="t-prompt" aria-hidden="true">$</span> what time is it</h1>
+  <p class="t-line t-dim">> processing question... done.</p>
+  <p class="t-line t-dim">> answer located. exactly 1 (one) answer found.</p>
+  <p class="t-line t-big">> 14:<span class="censor" aria-hidden="true">▓▓</span>:<span class="censor" aria-hidden="true">▓▓</span> <span class="t-dim">(answer partially encrypted)</span></p>
+  <p class="t-line">> decrypt: <a href="#tarifs">hour €1.00</a> · minutes €1.00 · seconds €1.00</p>
+  <p class="t-line">> or take your chances: <a href="#daily">1 free spin/day</a> · <a href="#tarifs">loot roulette €0.50</a></p>
+  <p class="t-line"><span class="cursor" aria-hidden="true">█</span></p>
+  <p class="hero-cta"><a class="btn" href="#tarifs">DECRYPT THE HOUR · €1.00</a></p>
 </section>
 
 <section id="tarifs" class="wrap">
-  <h2>Pricing as simple as time itself</h2>
-  <p class="offer">Launch offer: Complete Pack at <strong>€2.50</strong> instead of <s>€3.00</s>. Only <span class="mono" id="offer-timer">09:59</span> left to benefit. <span class="fine">(The offer renews itself, just like time.)</span></p>
-  <div class="cards">
-    <article class="card">
-      <h3>The Hour</h3>
-      <p class="price">€1.00</p>
-      <p class="desc">Know which hour you're living in. That's already a lot, honestly.</p>
-      <button class="btn btn-ghost" type="button" data-buy="hour">Buy the hour</button>
-    </article>
-    <article class="card">
-      <h3>The Minute</h3>
-      <p class="price">€1.00</p>
-      <p class="desc">For precise people. The ones who show up on time, ironically.</p>
-      <button class="btn btn-ghost" type="button" data-buy="minutes">Buy the minutes</button>
-    </article>
-    <article class="card">
-      <h3>The Second</h3>
-      <p class="price">€1.00</p>
-      <p class="desc">The elite of time. Reserved for seasoned chronophiles.</p>
-      <button class="btn btn-ghost" type="button" data-buy="seconds">Buy the seconds</button>
-    </article>
-    <article class="card featured">
-      <p class="badge">Best hour-per-euro ratio</p>
-      <h3>Complete Pack</h3>
-      <p class="price">€2.50 <s>€3.00</s></p>
-      <p class="desc">Hour, minutes and seconds, delivered in a single glance. Save €0.50, reinvestable in your future.</p>
-      <button class="btn btn-gold" type="button" data-buy="pack">Know it all</button>
-    </article>
-    <article class="card">
-      <h3>City of Your Choice</h3>
-      <p class="price">€1.00</p>
-      <p class="desc">You pick the timezone. Otherwise, the world roulette decides for you. The roulette comes included.</p>
-      <button class="btn btn-ghost" type="button" data-buy="city">Choose my city</button>
-    </article>
-    <article class="card">
-      <h3>The Loot Roulette</h3>
-      <p class="price">€0.50</p>
-      <p class="desc">One spin: the hour, the minutes, the seconds, or the city of your choice. Sometimes nothing. Cheaper than certainty, exactly as random as your day.</p>
-      <button class="btn btn-ghost" type="button" data-buy="roulette">Spin the wheel</button>
-    </article>
-    <article class="card sub">
-      <p class="subtag">Subscription</p>
-      <h3>Unlimited Time</h3>
-      <p class="price">€9.99<span class="per">/month</span></p>
-      <p class="desc">The time, continuously. Refreshes included. Our engineers finally made it scroll.</p>
-      <button class="btn btn-ghost" type="button" data-buy="unlimited">Subscribe</button>
-    </article>
+  <h2 class="cmd"><span class="t-prompt" aria-hidden="true">$</span> cat price_list.txt</h2>
+  <p class="t-status">> launch offer: pack €2.50 instead of €3.00 · ends in <span class="mono" id="offer-timer">09:59</span> <span class="t-dim">(the offer renews itself, just like time)</span></p>
+  <div class="receipt">
+    <p class="r-head mono">TIME RIGHT NOW · RATE CARD · ALL SALES FINAL</p>
+    <ul class="r-list">
+      <li class="r-row">
+        <span class="r-name">THE HOUR<span class="r-desc">which hour you live in. that's already a lot, honestly.</span></span>
+        <span class="r-dots" aria-hidden="true"></span>
+        <span class="r-price mono">€1.00</span>
+        <button class="btn btn-s" type="button" data-buy="hour">BUY</button>
+      </li>
+      <li class="r-row">
+        <span class="r-name">THE MINUTES<span class="r-desc">for precise people. the ones on time, ironically.</span></span>
+        <span class="r-dots" aria-hidden="true"></span>
+        <span class="r-price mono">€1.00</span>
+        <button class="btn btn-s" type="button" data-buy="minutes">BUY</button>
+      </li>
+      <li class="r-row">
+        <span class="r-name">THE SECONDS<span class="r-desc">the elite of time. seasoned chronophiles only.</span></span>
+        <span class="r-dots" aria-hidden="true"></span>
+        <span class="r-price mono">€1.00</span>
+        <button class="btn btn-s" type="button" data-buy="seconds">BUY</button>
+      </li>
+      <li class="r-row r-star">
+        <span class="r-name">COMPLETE PACK<span class="r-tag mono">BEST HOUR-PER-EURO RATIO</span><span class="r-desc">hour, minutes and seconds in one glance. save €0.50, reinvest in your future.</span></span>
+        <span class="r-dots" aria-hidden="true"></span>
+        <span class="r-price mono">€2.50 <s>€3.00</s></span>
+        <button class="btn btn-s" type="button" data-buy="pack">BUY</button>
+      </li>
+      <li class="r-row">
+        <span class="r-name">LOOT ROULETTE<span class="r-desc">one spin: hour, minutes, seconds or the city. sometimes nothing. odds published below.</span></span>
+        <span class="r-dots" aria-hidden="true"></span>
+        <span class="r-price mono">€0.50</span>
+        <button class="btn btn-s" type="button" data-buy="roulette">SPIN</button>
+      </li>
+      <li class="r-row">
+        <span class="r-name">CITY OF YOUR CHOICE<span class="r-desc">you pick the timezone. otherwise the world roulette picks for you. it's included, it.</span></span>
+        <span class="r-dots" aria-hidden="true"></span>
+        <span class="r-price mono">€1.00</span>
+        <button class="btn btn-s" type="button" data-buy="city">PICK</button>
+      </li>
+      <li class="r-row">
+        <span class="r-name">UNLIMITED TIME<span class="r-desc">the time, continuously. refreshes included. our engineers finally made it scroll.</span></span>
+        <span class="r-dots" aria-hidden="true"></span>
+        <span class="r-price mono">€9.99<span class="r-per">/mo</span></span>
+        <button class="btn btn-s" type="button" data-buy="unlimited">SUB</button>
+      </li>
+    </ul>
+    <p class="r-total mono">> paying customers so far: <strong id="buyers">0</strong> · figures certified by Stripe</p>
   </div>
-  <p class="scarcity">Already <strong class="mono" id="buyers">0</strong> paying customers in the know today. Figures certified by Stripe.</p>
 </section>
 
 <section id="daily" class="wrap">
-  <h2>The Daily Gamble</h2>
-  <p class="offer">One free spin per day. No stake, no purchase necessary. The house sells the time; it can afford to be generous.</p>
-  <div class="daily-box">
+  <h2 class="cmd"><span class="t-prompt" aria-hidden="true">$</span> spin --free --once-a-day</h2>
+  <div class="terminal daily">
     <p class="spin-token mono" id="spin-token" aria-live="polite">?</p>
-    <p><button class="btn btn-red" id="daily-spin" type="button">Spin</button></p>
-    <p class="fine" id="daily-status">Published odds, because we are serious people: 50% nothing · 25% the hour · 15% hour + minutes · 10% the complete pack. Winnings expire at midnight, like everything.</p>
+    <p><button class="btn btn-s" id="daily-spin" type="button">SPIN</button></p>
+    <p class="t-dim" id="daily-status">published odds, because we are serious people: 50% nothing · 25% the hour · 15% hour + minutes · 10% the complete pack. winnings expire at midnight, like everything.</p>
   </div>
 </section>
 
-<section id="coffre" class="coffre-wrap">
-  <div class="wrap">
-    <h2>Your time vault</h2>
-    <div id="coffre-body" class="coffre"></div>
-  </div>
+<section id="coffre" class="wrap">
+  <h2 class="cmd"><span class="t-prompt" aria-hidden="true">$</span> cat ~/time_vault</h2>
+  <div id="coffre-body" class="terminal vault"></div>
 </section>
 
 <section id="temoignages" class="wrap">
-  <h2>They paid to know</h2>
-  <div class="quotes">
-    <blockquote>
-      <p aria-label="5 stars out of 5">★★★★★</p>
-      <p>I already knew the time. But not like this.</p>
-      <footer>Gauthier, Lyon</footer>
+  <h2 class="cmd"><span class="t-prompt" aria-hidden="true">$</span> tail -n 3 reviews.log</h2>
+  <div class="terminal">
+    <blockquote class="log">
+      <span class="log-meta mono">[10-01 14:02] gauthier@lyon <span aria-label="5 stars out of 5">★★★★★</span></span>
+      I already knew the time. But not like this.
     </blockquote>
-    <blockquote>
-      <p aria-label="5 stars out of 5">★★★★★</p>
-      <p>€2.50 for hour, minutes and seconds. My punctuality entered another dimension.</p>
-      <footer>Sonja, Tallinn</footer>
+    <blockquote class="log">
+      <span class="log-meta mono">[10-03 09:11] sonja@tallinn <span aria-label="5 stars out of 5">★★★★★</span></span>
+      €2.50 for hour, minutes and seconds. My punctuality entered another dimension.
     </blockquote>
-    <blockquote>
-      <p aria-label="5 stars out of 5">★★★★★</p>
-      <p>The roulette gave me Ulaanbaatar. I made a friend there.</p>
-      <footer>Marc, Nantes</footer>
+    <blockquote class="log">
+      <span class="log-meta mono">[10-05 23:47] marc@nantes <span aria-label="5 stars out of 5">★★★★★</span></span>
+      The roulette gave me Ulaanbaatar. I made a friend there.
     </blockquote>
   </div>
 </section>
 
 <section id="faq" class="wrap">
-  <h2>Frequently asked questions</h2>
+  <h2 class="cmd"><span class="t-prompt" aria-hidden="true">$</span> man time-right-now</h2>
   <details>
     <summary>Is this a scam?</summary>
     <p>No. You receive exactly what you pay for: the time. Afterwards, if you'd rather read it for free on your phone like everyone else, that's your call.</p>
@@ -168,31 +159,30 @@
 </main>
 
 <footer class="site-foot">
-  <p>Time Right Now™ · Time is money. We cash in on both.</p>
-  <p>Swiss-grade timekeeping · Water-resistant to 3 ATM of hype.</p>
-  <p class="foot-links"><a href="about.html">About</a> · <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="#faq">FAQ</a></p>
+  <p class="mono">[trn] session closed · time is money · we cash in on both</p>
+  <p class="foot-links"><a href="about.html">about</a> · <a href="terms.html">terms</a> · <a href="privacy.html">privacy</a> · <a href="#faq">man</a></p>
   <p>All revenue funds ALLY, our accessibility project.</p>
   <p>© 2026 · All rights reserved, except the right to know the time for free.</p>
 </footer>
 
 <div class="roulette" id="roulette" role="dialog" aria-modal="true" aria-labelledby="roulette-title" hidden>
-  <div class="roulette-box">
-    <h3 id="roulette-title"></h3>
-    <p class="fine" id="roulette-sub"></p>
-    <p class="roulette-city" id="roulette-city" aria-live="off"></p>
+  <div class="roulette-box terminal">
+    <h3 id="roulette-title" class="mono"></h3>
+    <p class="fine mono" id="roulette-sub"></p>
+    <p class="roulette-city mono" id="roulette-city" aria-live="off"></p>
     <p class="roulette-time mono" id="roulette-time"></p>
-    <button class="btn btn-gold" id="roulette-accept" type="button" hidden></button>
-    <p class="fine">Any complaint will be handled with the seriousness it deserves.</p>
+    <button class="btn" id="roulette-accept" type="button" hidden></button>
+    <p class="fine mono">any complaint will be handled with the seriousness it deserves.</p>
   </div>
 </div>
 
-<p class="toast" id="toast" aria-live="polite" hidden></p>
+<p class="toast mono" id="toast" aria-live="polite" hidden></p>
 
 <noscript>
-  <p class="noscript">Without JavaScript, time still passes. Enjoy: it's free.</p>
+  <p class="noscript mono">without JavaScript, time still passes. enjoy: it's free.</p>
 </noscript>
 
-<script src="config.js?v=7"></script>
-<script src="app.js?v=7"></script>
+<script src="config.js?v=8"></script>
+<script src="app.js?v=8"></script>
 </body>
 </html>
