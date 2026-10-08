@@ -66,7 +66,7 @@
 
   /* ---------- State ---------- */
 
-  function blank() { return { owned: {}, instant: null, tz: null, prefTz: null }; }
+  function blank() { return { owned: {}, instant: null, tz: null, prefTz: null, daily: null }; }
   var state = blank();
   try {
     var raw = localStorage.getItem(STORE_KEY);
@@ -89,6 +89,97 @@
   function priceOf(k) { return PRICES[k] || '1.00'; }
   function fmtPrice(k) { return '€' + priceOf(k); }
   function randomZone() { return ZONES[Math.floor(Math.random() * ZONES.length)]; }
+
+  /* ---------- Daily gamble (free: no stake, expires at midnight) ---------- */
+
+  var DAILY_COVERS = { hour: ['hour'], hm: ['hour', 'minutes'], pack: ['hour', 'minutes', 'seconds'] };
+  var DAILY_TOKENS = { hour: 'H', hm: 'H+M', pack: 'H+M+S' };
+  var DAILY_JOKES = {
+    hour:  'Daily win: the hour, free, until midnight. Spend it wisely.',
+    hm:    'Daily win: hour and minutes until midnight. Respectable precision.',
+    pack:  'Daily win: the COMPLETE PACK until midnight. Tonight, you are horological aristocracy.',
+    none:  'Nothing. The time remains €1.00. See you tomorrow, gambler.',
+    used:  'One gamble per day. Time is limited; your appetite for it is not.'
+  };
+
+  function todayStr() { return new Date().toDateString(); }
+  function dailyActive() { return !!(state.daily && state.daily.d === todayStr() && state.daily.prize); }
+  function effectiveOwned(key) {
+    if (state.owned[key]) return true;
+    if (!dailyActive()) return false;
+    var covers = DAILY_COVERS[state.daily.prize];
+    return !!covers && covers.indexOf(key) >= 0;
+  }
+
+  function weightedPrize() {
+    var r = Math.random();
+    if (r < 0.50) return null;
+    if (r < 0.75) return 'hour';
+    if (r < 0.90) return 'hm';
+    return 'pack';
+  }
+
+  function renderDailyStatus() {
+    var token = $('#spin-token');
+    var status = $('#daily-status');
+    var btn = $('#daily-spin');
+    if (!token || !status) return;
+    if (state.daily && state.daily.d === todayStr()) {
+      token.textContent = state.daily.prize ? DAILY_TOKENS[state.daily.prize] : '∅';
+      token.classList.add('land');
+      status.textContent = state.daily.prize
+        ? 'Won today: ' + DAILY_TOKENS[state.daily.prize] + ', free until midnight. Next spin tomorrow.'
+        : 'Gamble used today. It was nothing. Next spin tomorrow, midnight sharp.';
+      if (btn) btn.disabled = false;
+    } else {
+      token.textContent = '?';
+      token.classList.remove('land');
+      status.textContent = 'Published odds, because we are serious people: 50% nothing · 25% the hour · 15% hour + minutes · 10% the complete pack. Winnings expire at midnight, like everything.';
+    }
+  }
+
+  function spinDaily() {
+    if (state.daily && state.daily.d === todayStr()) { toast(DAILY_JOKES.used); return; }
+    var prize = weightedPrize();
+    var token = $('#spin-token');
+    var btn = $('#daily-spin');
+    if (btn) btn.disabled = true;
+
+    function settle() {
+      state.daily = { d: todayStr(), prize: prize };
+      token.textContent = prize ? DAILY_TOKENS[prize] : '∅';
+      token.classList.add('land');
+      if (prize) {
+        if (!state.instant) {
+          state.instant = new Date().toISOString();
+          if (state.owned.city && state.prefTz) state.tz = state.prefTz;
+          else state.tz = randomZone();
+        }
+        save();
+        render();
+        toast(DAILY_JOKES[prize]);
+      } else {
+        save();
+        render();
+        toast(DAILY_JOKES.none);
+      }
+      renderDailyStatus();
+    }
+
+    if (reduceMotion || !token) { settle(); return; }
+    var glyphs = ['?', 'H', 'M', 'S', '∅'];
+    var i = Math.floor(Math.random() * glyphs.length);
+    var delay = 55;
+    token.classList.remove('land');
+    (function step() {
+      token.textContent = glyphs[i % glyphs.length];
+      i++;
+      delay *= 1.12;
+      if (delay < 380) setTimeout(step, delay);
+      else setTimeout(settle, 250);
+    })();
+  }
+
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   var toastTimer = null;
@@ -106,7 +197,7 @@
     var box = $('#coffre-body');
     if (!box) return;
     box.textContent = '';
-    var anyTime = !!(state.owned.hour || state.owned.minutes || state.owned.seconds);
+    var anyTime = !!(effectiveOwned('hour') || effectiveOwned('minutes') || effectiveOwned('seconds'));
 
     if (!anyTime) {
       box.appendChild(el('p', 'biglock', '🔒'));
@@ -146,7 +237,7 @@
     var segs = [['hour', 'hours', tp.h], ['minutes', 'min', tp.m], ['seconds', 'sec', tp.s]];
     segs.forEach(function (sg) {
       var key = sg[0], unit = sg[1], val = sg[2];
-      if (state.owned[key]) {
+      if (effectiveOwned(key)) {
         var seg = el('div', 'seg');
         seg.appendChild(el('span', 'digits', val));
         seg.appendChild(el('span', 'unit', unit));
@@ -164,6 +255,10 @@
     });
     box.appendChild(disp);
     box.appendChild(el('p', 'fine', 'Time frozen at the instant of purchase. Time itself moved on without you.'));
+    var dailyBoost = ['hour', 'minutes', 'seconds'].some(function (k) { return effectiveOwned(k) && !state.owned[k]; });
+    if (dailyBoost) {
+      box.appendChild(el('p', 'fine', 'Includes daily winnings. They expire at midnight, like everything else.'));
+    }
 
     if (state.owned.hour && state.owned.minutes && state.owned.seconds) {
       var pr = el('p'); pr.style.marginTop = '1rem';
@@ -495,6 +590,9 @@
     }
     var zc = $('#zone-count');
     if (zc) zc.textContent = ZONES.length;
+    var spinBtn = $('#daily-spin');
+    if (spinBtn) spinBtn.addEventListener('click', spinDaily);
+    renderDailyStatus();
     render();
     startFakeTimers();
 

@@ -185,6 +185,24 @@ h2::after {
 .scarcity { text-align: center; color: var(--muted); font-size: .9rem; margin-top: 1.6rem; }
 .scarcity strong { color: var(--text); }
 
+/* ---------- Daily gamble ---------- */
+
+.daily-box {
+  max-width: 640px; margin: 1.4rem auto 0;
+  background: var(--surface);
+  border: 1px solid var(--line); border-radius: 10px;
+  padding: 2rem 1.4rem; text-align: center;
+}
+.spin-token {
+  font-weight: 700; font-size: clamp(3rem, 9vw, 5rem);
+  line-height: 1; color: var(--gold); letter-spacing: .04em;
+  min-height: 1.1em; margin-bottom: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.spin-token.land { color: var(--red); }
+.btn-red { background: var(--red); color: #0B0B0D; }
+.btn-red:hover { background: #ff6b6b; }
+
 /* ---------- Time vault ---------- */
 
 .coffre {
