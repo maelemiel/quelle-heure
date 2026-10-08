@@ -70,7 +70,7 @@ for key, name, cents, desc, interval in ITEMS:
         link_params['invoice_creation[enabled]'] = 'true'
     link = call('POST', '/payment_links', link_params, 'qh-%s-link-%s' % (key, link_ver))
     print('%s -> %s' % (key, link['url']))
-    src = re.sub(r"(%s:\s*)''" % key, r"\g<1>'%s'" % link['url'], src)
+    src = re.sub(r"(%s:\s*)'[^']*'" % key, r"\g<1>'%s'" % link['url'], src)
 
 open(CONFIG, 'w').write(src)
 print()
