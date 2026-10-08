@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QuelleHeure™: What time is it? (premium answer from €1.00)</title>
+<meta name="description" content="The time, finally at its fair price. €1 for the hour, €1 for the minutes, €1 for the seconds. Complete Pack €2.50. City of your choice €1, otherwise the world-timezone roulette.">
+<meta name="theme-color" content="#05070D">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏳</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="starfield" aria-hidden="true"></canvas>
+<div class="nebula nebula-1" aria-hidden="true"></div>
+<div class="nebula nebula-2" aria-hidden="true"></div>
+
+<a class="skip" href="#coffre">Skip to the time vault</a>
+
+<header class="topbar">
+  <p class="brand">QuelleHeure<span aria-hidden="true">™</span></p>
+  <nav aria-label="Primary">
+    <a href="#tarifs">Pricing</a>
+    <a href="#coffre">The Vault</a>
+    <a href="#temoignages">Reviews</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+  <p class="badge-demo" data-demo hidden>Demo mode</p>
+</header>
+
+<main>
+<section class="hero">
+  <div class="orrery" aria-hidden="true">
+    <div class="ring r1"><span class="planet"></span></div>
+    <div class="ring r2"><span class="planet"></span></div>
+    <div class="ring r3"><span class="planet"></span></div>
+    <div class="sun"></div>
+  </div>
+  <h1>What time is it?</h1>
+  <p class="sub">The world's most consulted piece of information, finally at a fair price.</p>
+  <p class="tease">Spoiler: the time is right behind this text. It's not going anywhere.</p>
+  <p><a class="btn btn-gold" href="#tarifs">I want to know · from €1.00</a></p>
+  <p class="note">Satisfaction guaranteed or your time back* &nbsp;*see our single-article Terms: time is non-refundable.</p>
+</section>
+
+<section id="tarifs" class="wrap">
+  <h2>Pricing as simple as time itself</h2>
+  <p class="offer">Launch offer: Complete Pack at <strong>€2.50</strong> instead of <s>€3.00</s>. Only <span class="mono" id="offer-timer">09:59</span> left to benefit. <span class="fine">(The offer renews itself, just like time.)</span></p>
+  <div class="cards">
+    <article class="card">
+      <h3>The Hour</h3>
+      <p class="price">€1.00</p>
+      <p class="desc">Know which hour you're living in. That's already a lot, honestly.</p>
+      <button class="btn btn-ghost" type="button" data-buy="hour">Buy the hour</button>
+    </article>
+    <article class="card">
+      <h3>The Minute</h3>
+      <p class="price">€1.00</p>
+      <p class="desc">For precise people. The ones who show up on time, ironically.</p>
+      <button class="btn btn-ghost" type="button" data-buy="minutes">Buy the minutes</button>
+    </article>
+    <article class="card">
+      <h3>The Second</h3>
+      <p class="price">€1.00</p>
+      <p class="desc">The elite of time. Reserved for seasoned chronophiles.</p>
+      <button class="btn btn-ghost" type="button" data-buy="seconds">Buy the seconds</button>
+    </article>
+    <article class="card featured">
+      <p class="badge">Best hour-per-euro ratio</p>
+      <h3>Complete Pack</h3>
+      <p class="price">€2.50 <s>€3.00</s></p>
+      <p class="desc">Hour, minutes and seconds, delivered in a single glance. Save €0.50, reinvestable in your future.</p>
+      <button class="btn btn-gold" type="button" data-buy="pack">Know it all</button>
+    </article>
+    <article class="card">
+      <h3>City of Your Choice</h3>
+      <p class="price">€1.00</p>
+      <p class="desc">You pick the timezone. Otherwise, the world roulette decides for you. The roulette comes included.</p>
+      <button class="btn btn-ghost" type="button" data-buy="city">Choose my city</button>
+    </article>
+  </div>
+  <p class="scarcity">Already <strong class="mono" id="buyers">1,337</strong> people in the know today. Figures certified by ourselves.</p>
+</section>
+
+<section id="coffre" class="coffre-wrap">
+  <div class="wrap">
+    <h2>Your time vault</h2>
+    <div id="coffre-body" class="coffre"></div>
+  </div>
+</section>
+
+<section id="temoignages" class="wrap">
+  <h2>They paid to know</h2>
+  <div class="quotes">
+    <blockquote>
+      <p aria-label="5 stars out of 5">★★★★★</p>
+      <p>I already knew the time. But not like this.</p>
+      <footer>Gauthier, Lyon</footer>
+    </blockquote>
+    <blockquote>
+      <p aria-label="5 stars out of 5">★★★★★</p>
+      <p>€2.50 for hour, minutes and seconds. My punctuality entered another dimension.</p>
+      <footer>Sonja, Tallinn</footer>
+    </blockquote>
+    <blockquote>
+      <p aria-label="5 stars out of 5">★★★★★</p>
+      <p>The roulette gave me Ulaanbaatar. I made a friend there.</p>
+      <footer>Marc, Nantes</footer>
+    </blockquote>
+  </div>
+</section>
+
+<section id="faq" class="wrap">
+  <h2>Frequently asked questions</h2>
+  <details>
+    <summary>Is this a scam?</summary>
+    <p>No. You receive exactly what you pay for: the time. Afterwards, if you'd rather read it for free on your phone like everyone else, that's your call.</p>
+  </details>
+  <details>
+    <summary>Why pay for the time?</summary>
+    <p>Because time is money. We apply this proverb literally, with seriousness and accounting rigor.</p>
+  </details>
+  <details>
+    <summary>Is the displayed time reliable?</summary>
+    <p>It comes from your own device, which already knew it before your purchase. Our added value lies in the formatting and the golden frame.</p>
+  </details>
+  <details>
+    <summary>Can I get a refund?</summary>
+    <p>No. See our Terms of Service, single article: time is non-refundable.</p>
+  </details>
+  <details>
+    <summary>Is the city roulette rigged?</summary>
+    <p>It's exactly as random as your day. Which is to say: perfectly, but with a dramatic streak.</p>
+  </details>
+  <details>
+    <summary>Do you offer a subscription?</summary>
+    <p>"Unlimited Time" is coming soon: €9.99/month to know the time continuously. Our engineers are still figuring out how to make it scroll.</p>
+  </details>
+</section>
+</main>
+
+<footer class="site-foot">
+  <p>QuelleHeure™ · Time is money. We cash in on both.</p>
+  <p>Parody website. In demo mode: no real payment, no data collected, no time wasted.</p>
+  <p>© 2026 · All rights reserved, except the right to know the time for free.</p>
+</footer>
+
+<div class="modal" id="checkout" role="dialog" aria-modal="true" aria-labelledby="checkout-title" hidden>
+  <div class="modal-card">
+    <h3 id="checkout-title">Secure payment</h3>
+    <p class="checkout-line"><span id="checkout-item">Item</span> <strong class="mono" id="checkout-amount">€0.00</strong></p>
+    <form id="pay-form" novalidate>
+      <label for="card">Card number</label>
+      <input id="card" inputmode="numeric" autocomplete="off" placeholder="4242 4242 4242 4242" maxlength="19" value="4242 4242 4242 4242">
+      <div class="row">
+        <p>
+          <label for="exp">Expiry</label>
+          <input id="exp" inputmode="numeric" autocomplete="off" placeholder="12/34" maxlength="5" value="12/34">
+        </p>
+        <p>
+          <label for="cvc">CVC</label>
+          <input id="cvc" inputmode="numeric" autocomplete="off" placeholder="123" maxlength="4" value="123">
+        </p>
+      </div>
+      <button class="btn btn-gold btn-block" id="pay-btn" type="submit">Pay</button>
+    </form>
+    <p class="fine" id="checkout-note">Demo mode: the payment is fictional and your data never leaves this form (that's already a lot).</p>
+  </div>
+</div>
+
+<div class="roulette" id="roulette" role="dialog" aria-modal="true" aria-labelledby="roulette-title" hidden>
+  <div class="roulette-box">
+    <h3 id="roulette-title">Assigning your city</h3>
+    <p class="fine">Fair draw among the <span id="zone-count">400</span> timezones of the world. Randomness takes full responsibility.</p>
+    <p class="roulette-city" id="roulette-city" aria-live="off">…</p>
+    <p class="roulette-time mono" id="roulette-time"></p>
+    <button class="btn btn-gold" id="roulette-accept" type="button" hidden>I accept this city</button>
+    <p class="fine">Any complaint will be handled with the seriousness it deserves.</p>
+  </div>
+</div>
+
+<p class="toast" id="toast" aria-live="polite" hidden></p>
+
+<noscript>
+  <p class="noscript">Without JavaScript, time still passes. Enjoy: it's free.</p>
+</noscript>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
