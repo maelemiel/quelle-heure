@@ -90,7 +90,12 @@
     if (text != null) n.textContent = text;
     return n;
   }
-  function priceOf(k) { return PRICES[k] || '1.00'; }
+  function priceOf(k) {
+    var v = PRICES[k];
+    /* guard: a price must never be a payment link (config corruption would show a URL after the currency sign) */
+    if (!v || v.indexOf('http') === 0) return '1.00';
+    return v;
+  }
   function fmtPrice(k) { return '€' + priceOf(k); }
   function randomZone() { return ZONES[Math.floor(Math.random() * ZONES.length)]; }
   var osReduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
