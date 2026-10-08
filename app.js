@@ -1,5 +1,7 @@
-/* Time Right Now(tm) - client logic: purchases, vault, timezone roulette, daily gamble.
- * Deliberately minimal vanilla JS: no framework, no build, view source is the doc. */
+/* Maison du Temps(tm) - client logic.
+ * Purchases, vault ledger, and the real casino games:
+ * 24-card deck (hour), slot machine (minutes), croupier's dice (seconds),
+ * fortune wheel (loot), city roulette (overlay). Vanilla JS, no build. */
 (function () {
   'use strict';
 
@@ -9,22 +11,22 @@
   var STORE_KEY = 'trn_state_v1';
 
   var ITEMS = {
-    hour:      { label: 'The Hour' },
-    minutes:   { label: 'The Minutes' },
-    seconds:   { label: 'The Seconds' },
-    pack:      { label: 'The Complete Pack (H + M + S)' },
-    city:      { label: 'The City of Your Choice' },
+    hour:      { label: 'The Deck of 24' },
+    minutes:   { label: 'The Slot Machine' },
+    seconds:   { label: "The Croupier's Dice" },
+    pack:      { label: 'The Complete Hand' },
+    city:      { label: 'The City Roulette' },
     refresh:   { label: 'The Time Refresh' },
     unlimited: { label: 'Unlimited Time (subscription)' },
-    roulette:  { label: 'The Loot Roulette' }
+    roulette:  { label: 'The Wheel of Fortune' }
   };
 
   var JOKES = {
-    hour:    "Hour unlocked. You're now in the right hour. The right day is a separate product.",
-    minutes: 'Minutes unlocked. They were there all along, but now they are yours.',
-    seconds: 'Seconds unlocked. Welcome to absolute precision.',
-    pack:    'Complete Pack activated. Hour, minutes, seconds: you know everything. Well, everything that is for sale.',
-    refresh: 'Time updated. The previous one keeps sentimental value.',
+    hour:    'Card drawn. Whatever you picked, it was your hour. The house is generous like that.',
+    minutes: 'Reels settled. They did not decide your minutes. They merely presented them. Beautifully.',
+    seconds: 'Dice rolled. Fresh seconds, as promised. The croupier bows.',
+    pack:    'The Complete Hand, dealt. Hour, minutes, seconds: you know everything that is for sale.',
+    refresh: 'Time updated. The previous hand keeps sentimental value.',
     unlimited: 'Subscription active. The time now flows. Allegedly. Refreshes are included.'
   };
 
@@ -68,7 +70,7 @@
 
   /* ---------- State (localStorage) ---------- */
 
-  function blank() { return { owned: {}, instant: null, tz: null, prefTz: null, daily: null }; }
+  function blank() { return { owned: {}, drawn: {}, instant: null, tz: null, prefTz: null, daily: null }; }
   var state = blank();
   try {
     var raw = localStorage.getItem(STORE_KEY);
@@ -102,6 +104,133 @@
     toastTimer = setTimeout(function () { t.hidden = true; }, 4500);
   }
 
+  /* ---------- Game components (vanilla, keyboard-usable, reduced-motion safe) ---------- */
+
+  /* Wheel: conic rotor + rotated labels + pointer at top. spinTo(index) lands it under the pointer. */
+  function makeWheel(container, labels) {
+    var n = labels.length;
+    var seg = 360 / n;
+    var rotor = el('div', 'wheel-rotor');
+    var stops = [];
+    for (var i = 0; i < n; i++) {
+      stops.push((i % 2 ? '#8C2F26' : '#41110C') + ' ' + (i * seg) + 'deg ' + ((i + 1) * seg) + 'deg');
+    }
+    rotor.style.background = 'conic-gradient(' + stops.join(',') + ')';
+    labels.forEach(function (lb, i) {
+      var s = el('span', 'wlabel', lb);
+      var angle = i * seg + seg / 2;
+      s.style.transform = 'translate(-50%, -50%) rotate(' + angle + 'deg) translateY(-' + (17) + 'vw)';
+      s.style.left = '50%';
+      s.style.top = '50%';
+      rotor.appendChild(s);
+    });
+    container.appendChild(rotor);
+    var angle = 0;
+    return {
+      spinTo: function (index, done) {
+        var target = -(index * seg + seg / 2);
+        var delta = (target - (angle % 360) + 360) % 360;
+        angle += 5 * 360 + delta;
+        rotor.style.transform = 'rotate(' + angle + 'deg)';
+        setTimeout(done || function () {}, reduceMotion ? 50 : 4600);
+      }
+    };
+  }
+
+  /* Slot machine: n reels, each cycling glyphs then settling. */
+  function makeSlot(container, reels) {
+    var els = [];
+    for (var i = 0; i < reels; i++) {
+      var r = el('div', 'reel', '?');
+      container.appendChild(r);
+      els.push(r);
+    }
+    return {
+      run: function (finals, glyphs, done) {
+        if (reduceMotion) {
+          els.forEach(function (r, i) { r.textContent = finals[i]; });
+          if (done) done();
+          return;
+        }
+        els.forEach(function (r) { r.classList.remove('settled'); });
+        var stopped = 0;
+        els.forEach(function (r, i) {
+          var iv = setInterval(function () {
+            r.textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
+          }, 70);
+          setTimeout(function () {
+            clearInterval(iv);
+            r.textContent = finals[i];
+            r.classList.add('settled');
+            stopped++;
+            if (stopped === els.length && done) done();
+          }, 900 + i * 550);
+        });
+      }
+    };
+  }
+
+  /* Croupier's dice: tens die (0-5) + units die (0-9). */
+  function makeDice(container) {
+    var d1 = el('div', 'die', '-');
+    var d2 = el('div', 'die', '-');
+    container.appendChild(d1);
+    container.appendChild(d2);
+    return {
+      roll: function (tens, units, done) {
+        if (reduceMotion) {
+          d1.textContent = tens;
+          d2.textContent = units;
+          if (done) done();
+          return;
+        }
+        d1.classList.add('rolling');
+        d2.classList.add('rolling');
+        var iv = setInterval(function () {
+          d1.textContent = Math.floor(Math.random() * 6);
+          d2.textContent = Math.floor(Math.random() * 10);
+        }, 80);
+        setTimeout(function () {
+          clearInterval(iv);
+          d1.classList.remove('rolling');
+          d2.classList.remove('rolling');
+          d1.textContent = tens;
+          d2.textContent = units;
+          if (done) setTimeout(done, 450);
+        }, 1400);
+      }
+    };
+  }
+
+  /* Deck of 24: fan of face-down cards, any pick reveals the hour. */
+  function makeCardFan(container, hour, onDraw) {
+    var fan = el('div', 'fan');
+    var announced = false;
+    for (var i = 0; i < 24; i++) {
+      (function (idx) {
+        var c = el('button', 'card');
+        c.type = 'button';
+        c.setAttribute('aria-label', 'Card ' + (idx + 1) + ' of 24, face down');
+        var face = el('span', 'face', hour);
+        c.appendChild(face);
+        c.addEventListener('click', function () {
+          if (c.classList.contains('flipped')) return;
+          $$('.card', fan).forEach(function (o) {
+            if (o !== c) { o.classList.add('dim'); o.disabled = true; }
+          });
+          c.classList.add('flipped');
+          c.disabled = true;
+          if (!announced) {
+            announced = true;
+            if (!reduceMotion) setTimeout(onDraw, 600); else onDraw();
+          }
+        });
+        fan.appendChild(c);
+      })(i);
+    }
+    container.appendChild(fan);
+  }
+
   /* ---------- Daily gamble (free: no stake, expires at midnight) ---------- */
 
   var DAILY_COVERS = { hour: ['hour'], hm: ['hour', 'minutes'], pack: ['hour', 'minutes', 'seconds'] };
@@ -109,9 +238,9 @@
   var DAILY_JOKES = {
     hour:  'Daily win: the hour, free, until midnight. Spend it wisely.',
     hm:    'Daily win: hour and minutes until midnight. Respectable precision.',
-    pack:  'Daily win: the COMPLETE PACK until midnight. Tonight, you are horological aristocracy.',
-    none:  'Nothing. The time remains €1.00. See you tomorrow, gambler.',
-    used:  'One gamble per day. Time is limited; your appetite for it is not.'
+    pack:  'Daily win: the COMPLETE HAND until midnight. Tonight, you are horological aristocracy.',
+    none:  'The reels say: nothing. The time remains €1.00. See you tomorrow, player.',
+    used:  'One free pull per day. Time is limited; your appetite for it is not.'
   };
 
   function todayStr() { return new Date().toDateString(); }
@@ -131,32 +260,41 @@
     return 'pack';
   }
 
+  var dailySlot = null;
+
   function renderDailyStatus() {
-    var token = $('#spin-token');
     var status = $('#daily-status');
-    if (!token || !status) return;
+    if (!status) return;
     if (state.daily && state.daily.d === todayStr()) {
-      token.textContent = state.daily.prize ? DAILY_TOKENS[state.daily.prize] : '∅';
-      token.classList.add('land');
       status.textContent = state.daily.prize
-        ? 'Won today: ' + DAILY_TOKENS[state.daily.prize] + ', free until midnight. Next spin tomorrow.'
-        : 'Gamble used today. It was nothing. Next spin tomorrow, midnight sharp.';
+        ? 'Won today: ' + DAILY_TOKENS[state.daily.prize] + ', free until midnight. Next pull tomorrow.'
+        : 'Free pull used today. It was nothing. Next pull tomorrow, midnight sharp.';
     } else {
-      token.textContent = '?';
-      token.classList.remove('land');
-      status.textContent = 'Published odds, because we are serious people: 50% nothing · 25% the hour · 15% hour + minutes · 10% the complete pack. Winnings expire at midnight, like everything.';
+      status.textContent = 'published odds, because we are honest people: 50% nothing · 25% the hour · 15% hour + minutes · 10% the complete hand. winnings expire at midnight, like everything.';
     }
+  }
+
+  function initDaily() {
+    var stage = $('#daily-reels');
+    if (!stage) return;
+    dailySlot = makeSlot(stage, 3);
+    if (state.daily && state.daily.d === todayStr() && state.daily.prize) {
+      var t = DAILY_TOKENS[state.daily.prize];
+      var g = t.indexOf('S') >= 0 ? ['H', 'M', 'S'] : (t.indexOf('M') >= 0 ? ['H', 'M', 'M'] : ['H', 'H', 'H']);
+      $$('.reel', stage).forEach(function (r, i) { r.textContent = g[i]; });
+    }
+    var btn = $('#daily-spin');
+    if (btn) btn.addEventListener('click', spinDaily);
   }
 
   function spinDaily() {
     if (state.daily && state.daily.d === todayStr()) { toast(DAILY_JOKES.used); return; }
     var prize = weightedPrize();
-    var token = $('#spin-token');
+    var glyphs = ['?', 'H', 'M', 'S', '∅'];
+    var finalGlyph = prize === 'pack' ? 'S' : (prize === 'hm' ? 'M' : (prize ? 'H' : '∅'));
 
     function settle() {
       state.daily = { d: todayStr(), prize: prize };
-      token.textContent = prize ? DAILY_TOKENS[prize] : '∅';
-      token.classList.add('land');
       if (prize) {
         if (!state.instant) {
           state.instant = new Date().toISOString();
@@ -174,21 +312,52 @@
       renderDailyStatus();
     }
 
-    if (reduceMotion || !token) { settle(); return; }
-    var glyphs = ['?', 'H', 'M', 'S', '∅'];
-    var i = Math.floor(Math.random() * glyphs.length);
-    var delay = 55;
-    token.classList.remove('land');
-    (function step() {
-      token.textContent = glyphs[i % glyphs.length];
-      i++;
-      delay *= 1.12;
-      if (delay < 380) setTimeout(step, delay);
-      else setTimeout(settle, 250);
-    })();
+    dailySlot.run([finalGlyph, finalGlyph, finalGlyph], glyphs, settle);
   }
 
-  /* ---------- Vault rendering ---------- */
+  /* ---------- Vault (your table) ---------- */
+
+  var GAME_META = {
+    hour:    { action: 'DRAW A CARD',    aria: 'Draw one of the 24 cards to reveal your hour' },
+    minutes: { action: 'PULL THE LEVER', aria: 'Pull the lever to reveal your minutes' },
+    seconds: { action: 'ROLL THE DICE',  aria: 'Roll the dice to reveal your seconds' }
+  };
+
+  function runGame(key) {
+    var stage = $('#game-stage');
+    if (!stage) return;
+    stage.textContent = '';
+    var tp = partsIn(state.tz, new Date(state.instant));
+
+    if (key === 'hour') {
+      makeCardFan(stage, tp.h, function () {
+        state.drawn.hour = true;
+        save();
+        render();
+        toast(JOKES.hour);
+      });
+    } else if (key === 'minutes') {
+      var slot = makeSlot(stage, 2);
+      slot.run([tp.m.charAt(0), tp.m.charAt(1)], ['0','1','2','3','4','5','6','7','8','9'], function () {
+        setTimeout(function () {
+          state.drawn.minutes = true;
+          save();
+          render();
+          toast(JOKES.minutes);
+        }, 700);
+      });
+    } else if (key === 'seconds') {
+      var dice = makeDice(stage);
+      var tens = parseInt(tp.s.charAt(0), 10) || 0;
+      var units = parseInt(tp.s.charAt(1), 10) || 0;
+      dice.roll(tens, units, function () {
+        state.drawn.seconds = true;
+        save();
+        render();
+        toast(JOKES.seconds);
+      });
+    }
+  }
 
   function render() {
     var box = $('#coffre-body');
@@ -197,20 +366,20 @@
     var anyTime = !!(effectiveOwned('hour') || effectiveOwned('minutes') || effectiveOwned('seconds'));
 
     if (!anyTime) {
-      box.appendChild(el('p', 'biglock', '🔒'));
-      box.appendChild(el('p', 'coffre-empty', "It's time to pay to know what time it is."));
+      box.appendChild(el('p', 'biglock', '🎴'));
+      box.appendChild(el('p', 'coffre-empty', "Take a seat: it's time to pay to know what time it is."));
       if (state.owned.city) {
-        box.appendChild(el('p', 'fine', 'City selection is already unlocked. Only the time itself is missing.'));
+        box.appendChild(el('p', 'fine', 'The City Roulette is already yours. Only the time itself is missing.'));
         buildCityChooser(box);
       } else {
-        box.appendChild(el('p', 'fine', 'No time has been purchased on this device. Yours is waiting.'));
+        box.appendChild(el('p', 'fine', 'No time has been bought at this table. Yours is waiting, face down.'));
       }
       if (state.owned.unlimited) {
-        box.appendChild(el('p', 'fine', 'Unlimited subscriber detected. The time itself is still sold separately.'));
+        box.appendChild(el('p', 'fine', 'Unlimited player detected. The time itself is still sold separately.'));
       }
       var p = el('p'); p.style.marginTop = '1.2rem';
-      var cta = el('a', 'btn btn-ghost', 'See the pricing');
-      cta.href = '#tarifs';
+      var cta = el('a', 'chip chip-s', 'SEE THE TABLES');
+      cta.href = '#tables';
       p.appendChild(cta);
       box.appendChild(p);
       return;
@@ -221,24 +390,41 @@
     var lab = tzLabel(state.tz);
 
     box.appendChild(el('p', 'coffre-meta',
-      'Certified purchase instant: ' +
+      'Certified instant of purchase: ' +
       d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) +
-      ' at ' + d.toLocaleTimeString('en-GB') + ". Non-modifiable (that's the point)."));
+      ' at ' + d.toLocaleTimeString('en-GB') + '. Non-modifiable (that is the point).'));
 
     var chosen = !!(state.owned.city && state.prefTz && state.prefTz === state.tz);
     box.appendChild(el('p', 'coffre-city',
-      (chosen ? 'Your city: ' : 'City assigned by the roulette: ') + '📍 ' + lab.label +
-      (state.owned.unlimited ? ' · ∞ Unlimited subscriber' : '')));
+      (chosen ? 'Your city: ' : 'The wheel chose: ') + '📍 ' + lab.label +
+      (state.owned.unlimited ? ' · ∞ Unlimited player' : '')));
+
+    var gamePending = ['hour', 'minutes', 'seconds'].some(function (k) { return effectiveOwned(k) && !state.drawn[k]; });
+    if (gamePending) {
+      var stage = el('div', 'game-stage');
+      stage.id = 'game-stage';
+      stage.appendChild(el('p', 'fine', 'Your game is waiting. The ceremony matters.'));
+      box.appendChild(stage);
+    }
 
     var disp = el('div', 'time-display');
-    var segs = [['hour', 'hours', tp.h], ['minutes', 'min', tp.m], ['seconds', 'sec', tp.s]];
+    var segs = [['hour', 'hours', tp.h], ['minutes', 'minutes', tp.m], ['seconds', 'seconds', tp.s]];
     segs.forEach(function (sg) {
       var key = sg[0], unit = sg[1], val = sg[2];
-      if (effectiveOwned(key)) {
+      if (effectiveOwned(key) && state.drawn[key]) {
         var seg = el('div', 'seg');
         seg.appendChild(el('span', 'digits', val));
         seg.appendChild(el('span', 'unit', unit));
         disp.appendChild(seg);
+      } else if (effectiveOwned(key)) {
+        var gb = el('button', 'chip chip-s', GAME_META[key].action);
+        gb.type = 'button';
+        gb.setAttribute('data-game', key);
+        gb.setAttribute('aria-label', GAME_META[key].aria);
+        var w = el('div', 'seg');
+        w.appendChild(gb);
+        w.appendChild(el('span', 'unit', 'your ' + unit));
+        disp.appendChild(w);
       } else {
         var btn = el('button', 'seg seg-btn');
         btn.type = 'button';
@@ -259,8 +445,8 @@
 
     if (state.owned.hour && state.owned.minutes && state.owned.seconds) {
       var pr = el('p'); pr.style.marginTop = '1rem';
-      var up = el('button', 'btn btn-ghost',
-        state.owned.unlimited ? 'Refresh the time (included)' : 'Refresh the time (' + fmtPrice('refresh') + ')');
+      var up = el('button', 'chip chip-s',
+        state.owned.unlimited ? 'REFRESH (INCLUDED)' : 'REFRESH THE TIME (' + fmtPrice('refresh') + ')');
       up.type = 'button';
       up.setAttribute('data-buy', 'refresh');
       pr.appendChild(up);
@@ -271,12 +457,12 @@
       buildCityChooser(box);
     } else {
       var pc = el('p'); pc.style.marginTop = '1.2rem';
-      var bc = el('button', 'btn btn-ghost', 'Choose my city (' + fmtPrice('city') + ')');
+      var bc = el('button', 'chip chip-s', 'THE CITY ROULETTE (' + fmtPrice('city') + ')');
       bc.type = 'button';
       bc.setAttribute('data-buy', 'city');
       pc.appendChild(bc);
       box.appendChild(pc);
-      box.appendChild(el('p', 'fine', 'Or keep the roulette. It decides, and it does it well.'));
+      box.appendChild(el('p', 'fine', 'Or let the great wheel decide. It always does.'));
     }
   }
 
@@ -378,14 +564,54 @@
     host.appendChild(wrap);
   }
 
-  /* ---------- Timezone roulette ---------- */
+  /* ---------- City roulette overlay (real wheel) ---------- */
 
-  var LOOT_MAP = {
-    hour:    { glyph: 'H',  name: 'The Hour' },
-    minutes: { glyph: 'M',  name: 'The Minutes' },
-    seconds: { glyph: 'S',  name: 'The Seconds' },
-    city:    { glyph: '📍', name: 'The City of Your Choice' }
-  };
+  var CITY_WHEEL_LABELS = ['1','2','3','4','5','6','7','8','9','10','11','12'];
+
+  function startCityRoulette(targetTz, done) {
+    var ov = $('#roulette');
+    var hub = $('#wheel-hub');
+    var rotorBox = $('#roulette-wheel');
+    var cityEl = $('#roulette-city');
+    var timeEl = $('#roulette-time');
+    var btn = $('#roulette-accept');
+    var prev = document.activeElement;
+
+    $('#roulette-title').textContent = 'The great wheel chooses your city';
+    $('#roulette-sub').textContent = 'A fair spin among the ' + ZONES.length + ' timezones of the world. The wheel takes full responsibility.';
+    btn.textContent = 'I accept this city';
+    hub.textContent = '';
+    cityEl.setAttribute('aria-live', 'off');
+    cityEl.textContent = '';
+    timeEl.textContent = '';
+    btn.hidden = true;
+    rotorBox.textContent = '';
+    var wheel = makeWheel(rotorBox, CITY_WHEEL_LABELS);
+    ov.hidden = false;
+    document.body.classList.add('noscroll');
+
+    var t = partsIn(targetTz, new Date());
+    wheel.spinTo(Math.floor(Math.random() * 12), function () {
+      var l = tzLabel(targetTz);
+      hub.textContent = '❖';
+      cityEl.setAttribute('aria-live', 'polite');
+      cityEl.textContent = l.label;
+      timeEl.textContent = t.h + ':' + t.m + ':' + t.s;
+      btn.hidden = false;
+      btn.focus();
+    });
+
+    btn.onclick = function () {
+      ov.hidden = true;
+      document.body.classList.remove('noscroll');
+      if (prev && prev.focus) { try { prev.focus(); } catch (e) {} }
+      if (done) done();
+    };
+  }
+
+  /* ---------- Wheel of Fortune overlay (loot) ---------- */
+
+  var LOOT_LABELS = ['H', 'M', 'S', '📍', '∅'];
 
   function pickLoot() {
     var w = CFG.rouletteWeights || { hour: 25, minutes: 20, seconds: 15, city: 10, none: 30 };
@@ -402,113 +628,49 @@
     return 'none';
   }
 
-  function wheelOpen() {
-    var ov = $('#roulette');
-    ov.hidden = false;
-    document.body.classList.add('noscroll');
-    return {
-      ov: ov,
-      title: $('#roulette-title'),
-      sub: $('#roulette-sub'),
-      city: $('#roulette-city'),
-      time: $('#roulette-time'),
-      btn: $('#roulette-accept'),
-      prev: document.activeElement
-    };
-  }
-
-  function wheelClose(w, done, arg) {
-    w.ov.hidden = true;
-    document.body.classList.remove('noscroll');
-    if (w.prev && w.prev.focus) { try { w.prev.focus(); } catch (e) {} }
-    if (done) done(arg);
-  }
-
-  function startRoulette(targetTz, done) {
-    var w = wheelOpen();
-    w.title.textContent = 'Assigning your city';
-    w.sub.textContent = 'Fair draw among the ' + ZONES.length + ' timezones of the world. Randomness takes full responsibility.';
-    w.btn.textContent = 'I accept this city';
-    w.city.classList.remove('land');
-    w.city.setAttribute('aria-live', 'off');
-    w.city.textContent = '…';
-    w.time.textContent = '';
-    w.btn.hidden = true;
-
-    function finish() {
-      var l = tzLabel(targetTz);
-      var t = partsIn(targetTz, new Date());
-      w.city.setAttribute('aria-live', 'polite');
-      w.city.textContent = l.label;
-      w.city.classList.add('land');
-      w.time.textContent = t.h + ':' + t.m + ':' + t.s;
-      w.btn.hidden = false;
-      w.btn.focus();
-    }
-
-    if (reduceMotion) {
-      finish();
-    } else {
-      var i = Math.floor(Math.random() * ZONES.length);
-      var delay = 45;
-      (function step() {
-        var z = ZONES[i % ZONES.length];
-        i++;
-        var l = tzLabel(z);
-        var t = partsIn(z, new Date());
-        w.city.textContent = l.label;
-        w.time.textContent = t.h + ':' + t.m + ':' + t.s;
-        delay *= 1.09;
-        if (delay < 430) setTimeout(step, delay);
-        else setTimeout(finish, 350);
-      })();
-    }
-
-    w.btn.onclick = function () { wheelClose(w, done); };
-  }
-
   function startLootWheel(done) {
     var outcome = pickLoot();
     var dup = outcome !== 'none'
       ? (outcome === 'city' ? !!state.owned.city : !!state.owned[outcome])
       : false;
-    var w = wheelOpen();
-    w.title.textContent = 'Spinning the Loot Roulette';
-    w.sub.textContent = '€0.50 of pure anticipation. Odds published in the FAQ, certified by ourselves.';
-    w.btn.textContent = 'Collect';
-    w.city.classList.remove('land');
-    w.city.setAttribute('aria-live', 'off');
-    w.time.textContent = '';
-    w.btn.hidden = true;
+    var ov = $('#roulette');
+    var hub = $('#wheel-hub');
+    var rotorBox = $('#roulette-wheel');
+    var cityEl = $('#roulette-city');
+    var timeEl = $('#roulette-time');
+    var btn = $('#roulette-accept');
+    var prev = document.activeElement;
 
-    function finish() {
-      w.city.setAttribute('aria-live', 'polite');
-      w.city.textContent = outcome === 'none'
-        ? '∅ · Nothing'
-        : LOOT_MAP[outcome].glyph + ' · ' + LOOT_MAP[outcome].name + (dup ? ' (again)' : '');
-      w.city.classList.add('land');
-      w.btn.hidden = false;
-      w.btn.focus();
-    }
+    $('#roulette-title').textContent = 'The Wheel of Fortune';
+    $('#roulette-sub').textContent = '€0.50 of pure anticipation. Odds published in the house rules, certified by ourselves.';
+    btn.textContent = 'Collect';
+    hub.textContent = '';
+    cityEl.setAttribute('aria-live', 'off');
+    cityEl.textContent = '';
+    timeEl.textContent = '';
+    btn.hidden = true;
+    rotorBox.textContent = '';
+    var wheel = makeWheel(rotorBox, LOOT_LABELS);
+    ov.hidden = false;
+    document.body.classList.add('noscroll');
 
-    if (reduceMotion) {
-      finish();
-    } else {
-      var glyphs = ['H', 'M', 'S', '📍', '∅'];
-      var i = Math.floor(Math.random() * glyphs.length);
-      var delay = 55;
-      (function step() {
-        w.city.textContent = glyphs[i % glyphs.length];
-        i++;
-        delay *= 1.11;
-        if (delay < 390) setTimeout(step, delay);
-        else setTimeout(finish, 250);
-      })();
-    }
+    var outcomeIndex = { hour: 0, minutes: 1, seconds: 2, city: 3, none: 4 }[outcome];
+    wheel.spinTo(outcomeIndex, function () {
+      var name = outcome === 'none' ? 'Nothing' : ITEMS[outcome].label;
+      cityEl.setAttribute('aria-live', 'polite');
+      cityEl.textContent = name + (dup ? ' (again)' : '');
+      hub.textContent = LOOT_LABELS[outcomeIndex];
+      btn.hidden = false;
+      btn.focus();
+    });
 
-    w.btn.onclick = function () { wheelClose(w, done, dup ? 'dup:' + outcome : outcome); };
+    btn.onclick = function () {
+      ov.hidden = true;
+      document.body.classList.remove('noscroll');
+      if (prev && prev.focus) { try { prev.focus(); } catch (e) {} }
+      done(dup ? 'dup:' + outcome : outcome);
+    };
   }
-
 
   /* ---------- Purchases ---------- */
 
@@ -519,7 +681,7 @@
       window.location.href = link;
       return;
     }
-    toast('Payments are being wired right now. Try again in a moment.');
+    toast('The cashier is counting chips right now. Try again in a moment.');
   }
 
   function grant(item) {
@@ -548,6 +710,7 @@
       state.owned.seconds = true;
     } else if (item === 'refresh') {
       state.instant = new Date().toISOString();
+      state.drawn = {};
       if (state.owned.city && state.prefTz) {
         state.tz = state.prefTz;
         save();
@@ -557,13 +720,13 @@
       }
       state.tz = randomZone();
       save();
-      startRoulette(state.tz, render);
+      startCityRoulette(state.tz, render);
       return;
     } else if (item === 'city') {
       state.owned.city = true;
       save();
       render();
-      toast("City selection unlocked. The city, not the time. That's a different pack.");
+      toast("City Roulette unlocked. The city, not the time. That's a different table.");
       var inp = $('#city-input');
       if (inp) inp.focus();
       return;
@@ -579,11 +742,11 @@
         state.tz = state.prefTz;
         save();
         render();
-        toast("Certified instant captured. It's yours forever. Well, that particular one.");
+        toast('Certified instant captured. It is yours forever. Well, that particular one.');
       } else {
         state.tz = randomZone();
         save();
-        startRoulette(state.tz, render);
+        startCityRoulette(state.tz, render);
       }
       return;
     }
@@ -593,7 +756,7 @@
     if (JOKES[item]) toast(JOKES[item]);
   }
 
-  /* ---------- Real counters + decorative timer ---------- */
+  /* ---------- Real counter + decorative timer ---------- */
 
   function startFakeTimers() {
     var offerEl = $('#offer-timer');
@@ -609,7 +772,7 @@
     /* Real number of processed payments, from /api/stats (Stripe). */
     var buyers = $('#buyers');
     if (buyers) {
-      var line = buyers.closest('p, .r-total');
+      var line = buyers.closest('p, .house-count');
       fetch('/api/stats')
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (j) {
@@ -624,12 +787,13 @@
 
   document.addEventListener('click', function (ev) {
     var b = ev.target.closest ? ev.target.closest('[data-buy]') : null;
-    if (b) buyFlow(b.getAttribute('data-buy'));
+    if (b) { buyFlow(b.getAttribute('data-buy')); return; }
+    var g = ev.target.closest ? ev.target.closest('[data-game]') : null;
+    if (g) runGame(g.getAttribute('data-game'));
   });
 
   function init() {
-    var spinBtn = $('#daily-spin');
-    if (spinBtn) spinBtn.addEventListener('click', spinDaily);
+    initDaily();
     renderDailyStatus();
     render();
     startFakeTimers();

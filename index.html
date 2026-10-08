@@ -3,126 +3,119 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Time Right Now™: what time is it? (premium answer from €1.00)</title>
-<meta name="description" content="The time, finally at its fair price. €1 for the hour, €1 for the minutes, €1 for the seconds. Complete Pack €2.50. City of your choice €1, otherwise the world-timezone roulette. One free daily gamble.">
-<meta name="theme-color" content="#0d1117">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏳</text></svg>">
-<link rel="stylesheet" href="style.css?v=8">
+<title>Maison du Temps™: what time is it? (every game pays the truth, from €1)</title>
+<meta name="description" content="The world's most honest casino. One card for the hour (24 cards, one truth), a slot machine for the minutes, the croupier's dice for the seconds, a real roulette for your city. From €1. One free pull a day.">
+<meta name="theme-color" content="#0F3D2E">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎴</text></svg>">
+<link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
-<a class="skip" href="#coffre">Skip to the answer</a>
+<a class="skip" href="#coffre">Skip to your table</a>
 
-<header class="bar">
-  <p class="bar-brand"><a href="#top">[trn] what-time-is-it<span aria-hidden="true">*</span></a></p>
-  <nav class="bar-nav" aria-label="Primary">
-    <a href="#tarifs">pricing</a>
-    <a href="#daily">daily</a>
-    <a href="#coffre">vault</a>
-    <a href="#faq">man</a>
+<header class="marquee">
+  <p class="marquee-brand">MAISON DU TEMPS<span aria-hidden="true">™</span></p>
+  <nav class="marquee-nav" aria-label="Primary">
+    <a href="#tables">the tables</a>
+    <a href="#daily">free pull</a>
+    <a href="#coffre">your table</a>
+    <a href="#faq">house rules</a>
     <a href="about.html">about</a>
   </nav>
-  <p class="bar-right mono" aria-hidden="true">v1.0</p>
 </header>
 
-<main id="top">
-<section class="hero terminal" aria-label="Intro">
-  <h1 class="t-line"><span class="t-prompt" aria-hidden="true">$</span> what time is it</h1>
-  <p class="t-line t-dim">> processing question... done.</p>
-  <p class="t-line t-dim">> answer located. exactly 1 (one) answer found.</p>
-  <p class="t-line t-big">> 14:<span class="censor" aria-hidden="true">▓▓</span>:<span class="censor" aria-hidden="true">▓▓</span> <span class="t-dim">(answer partially encrypted)</span></p>
-  <p class="t-line">> decrypt: <a href="#tarifs">hour €1.00</a> · minutes €1.00 · seconds €1.00</p>
-  <p class="t-line">> or take your chances: <a href="#daily">1 free spin/day</a> · <a href="#tarifs">loot roulette €0.50</a></p>
-  <p class="t-line"><span class="cursor" aria-hidden="true">█</span></p>
-  <p class="hero-cta"><a class="btn" href="#tarifs">DECRYPT THE HOUR · €1.00</a></p>
+<main>
+<section class="entrance" aria-label="Intro">
+  <div class="fan fan-hero" aria-hidden="true">
+    <span class="card facedown"></span><span class="card facedown"></span><span class="card facedown"></span><span class="card facedown"></span><span class="card facedown"></span>
+  </div>
+  <h1>What time is it?</h1>
+  <p class="sub">The world's most honest casino. Every game pays out the same prize: the truth.</p>
+  <p class="tease">The answer is already on the table. Face down.</p>
+  <p><a class="chip" href="#tables">TAKE A SEAT · from €1</a></p>
+  <p class="note">The house always wins. So do you, technically. It is the same number every time.</p>
 </section>
 
-<section id="tarifs" class="wrap">
-  <h2 class="cmd"><span class="t-prompt" aria-hidden="true">$</span> cat price_list.txt</h2>
-  <p class="t-status">> launch offer: pack €2.50 instead of €3.00 · ends in <span class="mono" id="offer-timer">09:59</span> <span class="t-dim">(the offer renews itself, just like time)</span></p>
-  <div class="receipt">
-    <p class="r-head mono">TIME RIGHT NOW · RATE CARD · ALL SALES FINAL</p>
-    <ul class="r-list">
-      <li class="r-row">
-        <span class="r-name">THE HOUR<span class="r-desc">which hour you live in. that's already a lot, honestly.</span></span>
-        <span class="r-dots" aria-hidden="true"></span>
-        <span class="r-price mono">€1.00</span>
-        <button class="btn btn-s" type="button" data-buy="hour">BUY</button>
-      </li>
-      <li class="r-row">
-        <span class="r-name">THE MINUTES<span class="r-desc">for precise people. the ones on time, ironically.</span></span>
-        <span class="r-dots" aria-hidden="true"></span>
-        <span class="r-price mono">€1.00</span>
-        <button class="btn btn-s" type="button" data-buy="minutes">BUY</button>
-      </li>
-      <li class="r-row">
-        <span class="r-name">THE SECONDS<span class="r-desc">the elite of time. seasoned chronophiles only.</span></span>
-        <span class="r-dots" aria-hidden="true"></span>
-        <span class="r-price mono">€1.00</span>
-        <button class="btn btn-s" type="button" data-buy="seconds">BUY</button>
-      </li>
-      <li class="r-row r-star">
-        <span class="r-name">COMPLETE PACK<span class="r-tag mono">BEST HOUR-PER-EURO RATIO</span><span class="r-desc">hour, minutes and seconds in one glance. save €0.50, reinvest in your future.</span></span>
-        <span class="r-dots" aria-hidden="true"></span>
-        <span class="r-price mono">€2.50 <s>€3.00</s></span>
-        <button class="btn btn-s" type="button" data-buy="pack">BUY</button>
-      </li>
-      <li class="r-row">
-        <span class="r-name">LOOT ROULETTE<span class="r-desc">one spin: hour, minutes, seconds or the city. sometimes nothing. odds published below.</span></span>
-        <span class="r-dots" aria-hidden="true"></span>
-        <span class="r-price mono">€0.50</span>
-        <button class="btn btn-s" type="button" data-buy="roulette">SPIN</button>
-      </li>
-      <li class="r-row">
-        <span class="r-name">CITY OF YOUR CHOICE<span class="r-desc">you pick the timezone. otherwise the world roulette picks for you. it's included, it.</span></span>
-        <span class="r-dots" aria-hidden="true"></span>
-        <span class="r-price mono">€1.00</span>
-        <button class="btn btn-s" type="button" data-buy="city">PICK</button>
-      </li>
-      <li class="r-row">
-        <span class="r-name">UNLIMITED TIME<span class="r-desc">the time, continuously. refreshes included. our engineers finally made it scroll.</span></span>
-        <span class="r-dots" aria-hidden="true"></span>
-        <span class="r-price mono">€9.99<span class="r-per">/mo</span></span>
-        <button class="btn btn-s" type="button" data-buy="unlimited">SUB</button>
-      </li>
-    </ul>
-    <p class="r-total mono">> paying customers so far: <strong id="buyers">0</strong> · figures certified by Stripe</p>
-  </div>
+<section id="tables" class="wrap">
+  <h2>The tables</h2>
+  <p class="offer">Opening offer: the Complete Hand at <strong>€2.50</strong> instead of <s>€3.00</s>. Ends in <span class="mono" id="offer-timer">09:59</span> <span class="fine-inline">(the offer renews itself, just like time)</span></p>
+  <ul class="tables">
+    <li class="table-row">
+      <span class="t-name">The Deck of 24<span class="t-desc">one card decides your hour. there are exactly 24 cards, and exactly 24 hours. this is not a coincidence, it is pricing.</span></span>
+      <span class="t-price">€1.00</span>
+      <button class="chip chip-s" type="button" data-buy="hour">TAKE A CARD</button>
+    </li>
+    <li class="table-row">
+      <span class="t-name">The Slot Machine<span class="t-desc">the minutes. two reels, zero skill, one truth. the reels do not lie, they merely charge.</span></span>
+      <span class="t-price">€1.00</span>
+      <button class="chip chip-s" type="button" data-buy="minutes">PULL</button>
+    </li>
+    <li class="table-row">
+      <span class="t-name">The Croupier's Dice<span class="t-desc">the seconds. rolled fresh, before your very eyes. by your own browser, which knew everything all along.</span></span>
+      <span class="t-price">€1.00</span>
+      <button class="chip chip-s" type="button" data-buy="seconds">ROLL</button>
+    </li>
+    <li class="table-row table-star">
+      <span class="t-name">The Complete Hand<span class="t-tag">BEST ODDS OF KNOWING</span><span class="t-desc">hour, minutes and seconds. all three games, dealt at once. save €0.50, reinvest in your future.</span></span>
+      <span class="t-price">€2.50 <s>€3.00</s></span>
+      <button class="chip chip-s" type="button" data-buy="pack">TAKE THE HAND</button>
+    </li>
+    <li class="table-row">
+      <span class="t-name">The Wheel of Fortune<span class="t-desc">one spin: the hour, the minutes, the seconds, or the city of your choice. sometimes nothing. odds published in the house rules.</span></span>
+      <span class="t-price">€0.50</span>
+      <button class="chip chip-s" type="button" data-buy="roulette">SPIN</button>
+    </li>
+    <li class="table-row">
+      <span class="t-name">The City Roulette<span class="t-desc">you pick the city, or the great wheel picks it for you among every timezone on Earth. the wheel is included, it.</span></span>
+      <span class="t-price">€1.00</span>
+      <button class="chip chip-s" type="button" data-buy="city">CHOOSE</button>
+    </li>
+    <li class="table-row">
+      <span class="t-name">Unlimited Time<span class="t-desc">the subscription. the time, continuously, refreshes included. our engineers finally made it scroll.</span></span>
+      <span class="t-price">€9.99<span class="t-per">/mo</span></span>
+      <button class="chip chip-s" type="button" data-buy="unlimited">SUBSCRIBE</button>
+    </li>
+  </ul>
+  <p class="house-count mono">the house counts honestly: <strong id="buyers">0</strong> paying players · figures certified by Stripe</p>
 </section>
 
 <section id="daily" class="wrap">
-  <h2 class="cmd"><span class="t-prompt" aria-hidden="true">$</span> spin --free --once-a-day</h2>
-  <div class="terminal daily">
-    <p class="spin-token mono" id="spin-token" aria-live="polite">?</p>
-    <p><button class="btn btn-s" id="daily-spin" type="button">SPIN</button></p>
-    <p class="t-dim" id="daily-status">published odds, because we are serious people: 50% nothing · 25% the hour · 15% hour + minutes · 10% the complete pack. winnings expire at midnight, like everything.</p>
+  <h2>The free pull</h2>
+  <p class="offer">One free pull per day. No stake, no purchase necessary. The house can afford one generous machine.</p>
+  <div class="panel daily">
+    <div id="daily-reels" class="slot" aria-live="polite"></div>
+    <p><button class="chip chip-s" id="daily-spin" type="button">PULL, FREE</button></p>
+    <p class="fine mono" id="daily-status">published odds, because we are honest people: 50% nothing · 25% the hour · 15% hour + minutes · 10% the complete hand. winnings expire at midnight, like everything.</p>
   </div>
 </section>
 
 <section id="coffre" class="wrap">
-  <h2 class="cmd"><span class="t-prompt" aria-hidden="true">$</span> cat ~/time_vault</h2>
-  <div id="coffre-body" class="terminal vault"></div>
+  <h2>Your table</h2>
+  <div id="coffre-body" class="panel vault"></div>
 </section>
 
 <section id="temoignages" class="wrap">
-  <h2 class="cmd"><span class="t-prompt" aria-hidden="true">$</span> tail -n 3 reviews.log</h2>
-  <div class="terminal">
-    <blockquote class="log">
-      <span class="log-meta mono">[10-01 14:02] gauthier@lyon <span aria-label="5 stars out of 5">★★★★★</span></span>
-      I already knew the time. But not like this.
+  <h2>Word from the floor</h2>
+  <div class="panel">
+    <blockquote class="quote">
+      <p class="stars" aria-label="5 stars out of 5">★★★★★</p>
+      <p>I already knew the time. But not like this.</p>
+      <footer>Gauthier, Lyon</footer>
     </blockquote>
-    <blockquote class="log">
-      <span class="log-meta mono">[10-03 09:11] sonja@tallinn <span aria-label="5 stars out of 5">★★★★★</span></span>
-      €2.50 for hour, minutes and seconds. My punctuality entered another dimension.
+    <blockquote class="quote">
+      <p class="stars" aria-label="5 stars out of 5">★★★★★</p>
+      <p>€2.50 for hour, minutes and seconds. My punctuality entered another dimension.</p>
+      <footer>Sonja, Tallinn</footer>
     </blockquote>
-    <blockquote class="log">
-      <span class="log-meta mono">[10-05 23:47] marc@nantes <span aria-label="5 stars out of 5">★★★★★</span></span>
-      The roulette gave me Ulaanbaatar. I made a friend there.
+    <blockquote class="quote">
+      <p class="stars" aria-label="5 stars out of 5">★★★★★</p>
+      <p>The roulette gave me Ulaanbaatar. I made a friend there.</p>
+      <footer>Marc, Nantes</footer>
     </blockquote>
   </div>
 </section>
 
 <section id="faq" class="wrap">
-  <h2 class="cmd"><span class="t-prompt" aria-hidden="true">$</span> man time-right-now</h2>
+  <h2>House rules</h2>
   <details>
     <summary>Is this a scam?</summary>
     <p>No. You receive exactly what you pay for: the time. Afterwards, if you'd rather read it for free on your phone like everyone else, that's your call.</p>
@@ -133,14 +126,14 @@
   </details>
   <details>
     <summary>Is the displayed time reliable?</summary>
-    <p>It comes from your own device, which already knew it before your purchase. Our added value lies in the formatting and the golden frame.</p>
+    <p>It comes from your own device, which already knew it before your purchase. Our added value lies in the felt, the cards, and the ceremony.</p>
   </details>
   <details>
     <summary>Can I get a refund?</summary>
     <p>No. See our Terms of Service, single article: time is non-refundable.</p>
   </details>
   <details>
-    <summary>Is the city roulette rigged?</summary>
+    <summary>Is the City Roulette rigged?</summary>
     <p>It's exactly as random as your day. Which is to say: perfectly, but with a dramatic streak.</p>
   </details>
   <details>
@@ -148,8 +141,12 @@
     <p>Yes. "Unlimited Time" is live: €9.99/month, time refreshes included. Our engineers finally made it scroll.</p>
   </details>
   <details>
-    <summary>Is the Loot Roulette fair?</summary>
+    <summary>Is the Wheel of Fortune fair?</summary>
     <p>Published odds, certified by ourselves: 25% the hour · 20% the minutes · 15% the seconds · 10% the city of your choice · 30% nothing. Winning something you already own counts as nothing. Transparency to a fault.</p>
+  </details>
+  <details>
+    <summary>Do the games change what I win?</summary>
+    <p>No. The card, the reels and the dice reveal your time. They do not decide it. This is a casino the way a candle is a fire: ceremonially.</p>
   </details>
   <details>
     <summary>Where does the money go?</summary>
@@ -159,30 +156,35 @@
 </main>
 
 <footer class="site-foot">
-  <p class="mono">[trn] session closed · time is money · we cash in on both</p>
-  <p class="foot-links"><a href="about.html">about</a> · <a href="terms.html">terms</a> · <a href="privacy.html">privacy</a> · <a href="#faq">man</a></p>
+  <p class="foot-brand">MAISON DU TEMPS™ · TIME IS MONEY · WE CASH IN ON BOTH</p>
+  <p class="foot-links"><a href="about.html">about</a> · <a href="terms.html">terms</a> · <a href="privacy.html">privacy</a> · <a href="#faq">house rules</a></p>
   <p>All revenue funds ALLY, our accessibility project.</p>
   <p>© 2026 · All rights reserved, except the right to know the time for free.</p>
 </footer>
 
-<div class="roulette" id="roulette" role="dialog" aria-modal="true" aria-labelledby="roulette-title" hidden>
-  <div class="roulette-box terminal">
-    <h3 id="roulette-title" class="mono"></h3>
+<div class="overlay" id="roulette" role="dialog" aria-modal="true" aria-labelledby="roulette-title" hidden>
+  <div class="overlay-box panel">
+    <h3 id="roulette-title"></h3>
     <p class="fine mono" id="roulette-sub"></p>
-    <p class="roulette-city mono" id="roulette-city" aria-live="off"></p>
+    <div class="wheel" id="roulette-wheel" aria-hidden="true">
+      <div class="wheel-rotor" id="wheel-rotor"></div>
+      <div class="wheel-hub" id="wheel-hub"></div>
+      <div class="wheel-pointer"></div>
+    </div>
+    <p class="roulette-city" id="roulette-city" aria-live="off"></p>
     <p class="roulette-time mono" id="roulette-time"></p>
-    <button class="btn" id="roulette-accept" type="button" hidden></button>
+    <button class="chip" id="roulette-accept" type="button" hidden></button>
     <p class="fine mono">any complaint will be handled with the seriousness it deserves.</p>
   </div>
 </div>
 
-<p class="toast mono" id="toast" aria-live="polite" hidden></p>
+<p class="toast" id="toast" aria-live="polite" hidden></p>
 
 <noscript>
-  <p class="noscript mono">without JavaScript, time still passes. enjoy: it's free.</p>
+  <p class="noscript">without JavaScript, time still passes. enjoy: it's free.</p>
 </noscript>
 
-<script src="config.js?v=8"></script>
-<script src="app.js?v=8"></script>
+<script src="config.js?v=9"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>
