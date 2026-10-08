@@ -2,3 +2,11 @@
 .env
 .env.*
 *.local.js
+
+# agent-tool symlink farms created by `npx skills add`
+.*
+skills/
+skills-lock.json
+agent/
+data/
+!.gitignore
