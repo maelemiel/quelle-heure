@@ -1,50 +1,60 @@
 # QuelleHeure™
 
-Site parodique « troll mais sérieux » : on paie pour connaître l'heure.
+Parody website, "troll but serious": you pay to know the time. Space-themed ("celestial atlas"), full English, accessibility-first.
+
+**Live**: https://maelemiel.github.io/quelle-heure/
+**Repo**: https://github.com/maelemiel/quelle-heure
 
 ## Concept
 
-- 1,00 € l'heure, 1,00 € les minutes, 1,00 € les secondes
-- Pack Intégral H + M + S : 2,50 € (au lieu de 3,00 €)
-- Ville au choix : 1,00 €. Sinon : roulette animée sur tous les fuseaux horaires IANA
-- L'heure achetée est figée à l'instant de l'achat. L'actualiser coûte 2,50 €
-- Achats persistés en localStorage, aucune donnée envoyée nulle part
+- €1.00 for the hour, €1.00 for the minutes, €1.00 for the seconds
+- Complete Pack H + M + S: €2.50 (instead of €3.00)
+- City of your choice: €1.00. Otherwise: animated roulette across all IANA timezones
+- The time you buy is frozen at the instant of purchase. Refreshing it costs €2.50
+- Purchases persist in localStorage, no data ever leaves the browser
 
-## Lancer (mode démo)
+## Run locally
 
 ```bash
 python3 -m http.server 8123
 # http://127.0.0.1:8123
 ```
 
-Ou double-clic sur `index.html` (aucune dépendance, aucun build).
+Or open `index.html` directly (no dependency, no build).
 
 ## Structure
 
-- `index.html` : page unique (hero, tarifs, coffre, avis, FAQ)
-- `style.css` : thème navy/or, serif horloger
-- `app.js` : état, coffre, roulette, checkout démo, autocomplétion ville
-- `config.js` : prix + Stripe Payment Links
+- `index.html`: single page (hero, pricing, vault, reviews, FAQ)
+- `style.css`: "celestial atlas" theme (deep space, aurora teal/violet, star gold, glass cards, orrery)
+- `app.js`: state, vault, roulette, demo checkout, city autocomplete, canvas starfield
+- `config.js`: prices + Stripe Payment Links
+- `setup-stripe.sh`: one-shot Stripe provisioning (products, prices, links) + config wiring
 
-## Paiements réels (Stripe Payment Links, ~5 min)
+## Real payments (Stripe Payment Links)
 
-1. Dashboard Stripe > Payment Links : créer 5 liens (heure 1 €, minutes 1 €, secondes 1 €, pack 2,50 €, ville 1 €)
-2. Sur chaque lien, « After payment » > Redirect vers `https://VOTRE_DOMAINE/?unlock=hour|minutes|seconds|pack|city`
-3. Coller les 5 URLs dans `config.js` et passer `demo` à `false`
+Demo mode ships by default (fake checkout, no transaction). To go live:
 
-Le déverrouillage se fait au retour via le paramètre `?unlock=`. Le lien `pack` sert aussi au bouton « Actualiser l'heure ».
+```bash
+stripe login              # browser auth, Mael only
+./setup-stripe.sh         # creates 5 products/prices/links, wires config.js, demo:false
+git add config.js && git commit -m "wire real Stripe payment links" && git push
+```
 
-## Déploiement
+The script is idempotent (stable idempotency keys): re-running never duplicates.
+Each link redirects after payment to `https://maelemiel.github.io/quelle-heure/?unlock=<item>`,
+which unlocks the purchase on return. The `pack` link also powers "Refresh the time".
+Override the target with `BASE_URL=https://... ./setup-stripe.sh` if the domain changes.
 
-Statique, sans build : Vercel, Netlify, GitHub Pages ou nginx.
+## Accessibility (a11y first)
 
-## Accessibilité
+- Contrast ratios verified with the RGAA tool: star gold on deep space 12.76:1 (AAA),
+  muted text on card 8.75:1 (AAA), aurora teal on card 11.68:1 (AAA), ink on gold button 9.41:1 (AAA)
+- Static audit (ALLY snippet engine): 0 finding (labels, names, semantics, no positive tabindex)
+- `prefers-reduced-motion`: starfield static, orrery/roulette instant, no sweeps
+- Full keyboard nav, visible focus rings, `aria-live` (roulette, toasts), `aria-modal` dialogs,
+  combobox pattern (listbox/option, arrows, Enter, Escape) for the city picker
+- Starfield/nebulas/orrery are `aria-hidden` decorative layers
 
-- Contrastes vérifiés avec l'outil RGAA : or sur fond 9,82:1 (AAA), texte secondaire 8,72:1 (AAA), texte sur bouton or 9,41:1 (AAA)
-- `prefers-reduced-motion` respecté (roulette instantanée, horloge figée)
-- Navigation clavier complète, focus visibles, `aria-live` (roulette, toasts), dialogues `aria-modal`
-- Combobox ville : rôles listbox/option, flèches, Entrée, Échap
+## Warning
 
-## Avertissement
-
-Parodie. En mode démo, aucun paiement réel n'est traité et aucune donnée n'est collectée.
+Parody. In demo mode no real payment is processed and no data is collected.
