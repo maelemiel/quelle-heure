@@ -1,53 +1,78 @@
 #!/usr/bin/env bash
-# QuelleHeure - Stripe setup (LIVE mode)
-# Creates products, prices and payment links, then wires the real URLs into
-# config.js (demo -> false). Prereq: `stripe login` (browser) or STRIPE_API_KEY.
-# Re-run safe: stable idempotency keys, no duplicates.
+# QuelleHeure - Stripe setup (pure REST, no CLI flags needed)
+# Creates products, prices, payment links (one-time + subscription),
+# enables email invoices, then wires the real URLs into config.js (demo -> false).
+#
+# Usage:
+#   sandbox : STRIPE_API_KEY=sk_test_... ./setup-stripe.sh
+#   live    : STRIPE_API_KEY=sk_live_... ./setup-stripe.sh   (restricted key recommended)
+# Optional: BASE_URL=https://your.domain/ ./setup-stripe.sh
+# Re-run safe: stable Idempotency-Key headers, no duplicates.
 set -euo pipefail
 
-BASE_URL="${BASE_URL:-https://maelemiel.github.io/quelle-heure/}"
 DIR="$(cd "$(dirname "$0")" && pwd)"
-CONFIG="$DIR/config.js"
-FLAGS="--live"   # the CLI refuses live commands without this flag
+: "${STRIPE_API_KEY:?Set STRIPE_API_KEY (sk_test_... or sk_live_...). Dashboard > Developers > API keys.}"
+export BASE_URL="${BASE_URL:-https://maelemiel.github.io/quelle-heure/}"
+export CONFIG_PATH="$DIR/config.js"
 
-if ! out=$(stripe $FLAGS payment_links list --limit 1 2>&1); then
-  echo "Stripe CLI not usable. Real error was:"
-  echo "$out" | head -5
-  echo
-  echo "Fix: run 'stripe login' (browser auth), then retry."
-  exit 1
-fi
+python3 <<'PY'
+import json, os, sys, urllib.error, urllib.parse, urllib.request
 
-id() { python3 -c 'import sys,json;print(json.load(sys.stdin)["id"])'; }
+KEY = os.environ['STRIPE_API_KEY']
+BASE = os.environ['BASE_URL'].rstrip('/')
+CONFIG = os.environ['CONFIG_PATH']
 
-setup_item() { # key name cents description
-  local key="$1" name="$2" cents="$3" desc="$4"
-  local prod price link
-  prod=$(stripe $FLAGS products create --name "$name" --description "$desc" \
-    --idempotency-key "qh-${key}-prod-v1" | id)
-  price=$(stripe $FLAGS prices create --product "$prod" --unit-amount "$cents" --currency eur \
-    --idempotency-key "qh-${key}-price-v1" | id)
-  link=$(stripe $FLAGS payment_links create \
-    -d "line_items[0][price]=$price" -d "line_items[0][quantity]=1" \
-    --after-completion.type=redirect --after-completion.redirect.url="$BASE_URL?unlock=$key" \
-    --idempotency-key "qh-${key}-link-v1" | id)
-  echo "$key -> $link"
-  python3 - "$CONFIG" "$key" "$link" <<'PY'
-import sys, re
-path, key, link = sys.argv[1], sys.argv[2], sys.argv[3]
-src = open(path).read()
-src = re.sub(r"(%s:\s*)''" % key, r"\1'%s'" % link, src)
-src = src.replace("demo: true", "demo: false", 1)
-open(path, "w").write(src)
+def call(method, path, params=None, idem=None):
+    req = urllib.request.Request('https://api.stripe.com/v1' + path,
+                                 data=urllib.parse.urlencode(params or {}).encode(),
+                                 method=method)
+    req.add_header('Authorization', 'Bearer ' + KEY)
+    if idem:
+        req.add_header('Idempotency-Key', idem)
+    try:
+        with urllib.request.urlopen(req) as r:
+            return json.load(r)
+    except urllib.error.HTTPError as e:
+        print('Stripe error on %s %s:' % (method, path))
+        print(e.read().decode()[:500])
+        sys.exit(1)
+
+call('GET', '/payment_links?limit=1')  # auth probe; exits with a clear error above if the key is bad
+
+ITEMS = [
+    ('hour',      'The Hour',                100, "Know which hour you're living in. That's already a lot, honestly.", ''),
+    ('minutes',   'The Minutes',             100, 'For precise people. The ones who show up on time, ironically.', ''),
+    ('seconds',   'The Seconds',             100, 'The elite of time. Reserved for seasoned chronophiles.', ''),
+    ('pack',      'The Complete Pack',       250, 'Hour, minutes and seconds, delivered in a single glance.', ''),
+    ('city',      'The City of Your Choice', 100, 'You pick the timezone. Otherwise, the world roulette decides for you.', ''),
+    ('unlimited', 'Unlimited Time',          999, 'The time, continuously. Refreshes included.', 'month'),
+]
+
+import re
+src = open(CONFIG).read()
+
+for key, name, cents, desc, interval in ITEMS:
+    prod = call('POST', '/products', {'name': name, 'description': desc}, 'qh-%s-prod-v1' % key)
+    price_params = {'product': prod['id'], 'unit_amount': cents, 'currency': 'eur'}
+    if interval:
+        price_params['recurring[interval]'] = interval
+    price = call('POST', '/prices', price_params, 'qh-%s-price-v1' % key)
+    link_params = {
+        'line_items[0][price]': price['id'],
+        'line_items[0][quantity]': '1',
+        'after_completion[type]': 'redirect',
+        'after_completion[redirect][url]': BASE + '/?unlock=' + key,
+    }
+    # invoice_creation is not allowed with recurring prices (subscriptions invoice natively)
+    if not interval:
+        link_params['invoice_creation[enabled]'] = 'true'
+    link = call('POST', '/payment_links', link_params, 'qh-%s-link-%s' % (key, 'v2' if interval else 'v1'))
+    print('%s -> %s' % (key, link['url']))
+    src = re.sub(r"(%s:\s*)''" % key, r"\g<1>'%s'" % link['url'], src)
+
+src = re.sub(r"(  demo: )true", r"\g<1>false", src, count=1)
+open(CONFIG, 'w').write(src)
+print()
+print('config.js updated (demo: false). Publish it:')
+print('  git add config.js && git commit -m "wire real Stripe payment links" && git push')
 PY
-}
-
-setup_item hour    "The Hour"                100 "Know which hour you're living in. That's already a lot, honestly."
-setup_item minutes "The Minutes"             100 "For precise people. The ones who show up on time, ironically."
-setup_item seconds "The Seconds"             100 "The elite of time. Reserved for seasoned chronophiles."
-setup_item pack    "The Complete Pack"       250 "Hour, minutes and seconds, delivered in a single glance."
-setup_item city    "The City of Your Choice" 100 "You pick the timezone. Otherwise, the world roulette decides for you."
-
-echo
-echo "config.js updated (demo: false). Publish it:"
-echo "  cd $DIR && git add config.js && git commit -m 'wire real Stripe payment links' && git push"

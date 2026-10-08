@@ -30,20 +30,31 @@ Or open `index.html` directly (no dependency, no build).
 - `config.js`: prices + Stripe Payment Links
 - `setup-stripe.sh`: one-shot Stripe provisioning (products, prices, links) + config wiring
 
-## Real payments (Stripe Payment Links)
+## Real payments (Stripe)
 
-Demo mode ships by default (fake checkout, no transaction). To go live:
+Same script for both environments; the key decides the mode:
 
 ```bash
-stripe login              # browser auth, Mael only
-./setup-stripe.sh         # creates 5 products/prices/links, wires config.js, demo:false
+# Sandbox (test card 4242 4242 4242 4242, no real money):
+STRIPE_API_KEY=sk_test_... ./setup-stripe.sh
+
+# Live (create a restricted key in Dashboard > Developers > API keys):
+STRIPE_API_KEY=rk_live_... ./setup-stripe.sh
 git add config.js && git commit -m "wire real Stripe payment links" && git push
 ```
 
-The script is idempotent (stable idempotency keys): re-running never duplicates.
-Each link redirects after payment to `https://maelemiel.github.io/quelle-heure/?unlock=<item>`,
-which unlocks the purchase on return. The `pack` link also powers "Refresh the time".
-Override the target with `BASE_URL=https://... ./setup-stripe.sh` if the domain changes.
+- Payments: 5 one-time Payment Links (hour / minutes / seconds / pack / city)
+- Billing: "Unlimited Time" €9.99/month subscription link (subscribers refresh the time for free)
+- Invoicing: email invoices enabled on one-time links; subscriptions invoice natively
+- Each link redirects after payment to `https://maelemiel.github.io/quelle-heure/?unlock=<item>`,
+  which unlocks the purchase on return; the `pack` link also powers "Refresh the time"
+- Idempotent (stable Idempotency-Key headers): re-runs never duplicate
+- Buy buttons navigate same-tab (`location.href`), immune to popup blockers
+- Known trade-off: unlocking is client-side (no backend, no webhook). Fine for a parody;
+  a real gate would need a server listening to `checkout.session.completed`
+- A wired sandbox config is kept in `config.local.js` (gitignored) for local testing
+- Business name shown on checkout comes from the Stripe account's
+  Settings > Public business profile
 
 ## Accessibility (a11y first)
 

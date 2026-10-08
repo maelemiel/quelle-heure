@@ -13,7 +13,8 @@
     seconds: { label: 'The Seconds' },
     pack:    { label: 'The Complete Pack (H + M + S)' },
     city:    { label: 'The City of Your Choice' },
-    refresh: { label: 'The Time Refresh' }
+    refresh: { label: 'The Time Refresh' },
+    unlimited: { label: 'Unlimited Time (subscription)' }
   };
 
   var JOKES = {
@@ -21,7 +22,8 @@
     minutes: 'Minutes unlocked. They were there all along, but now they are yours.',
     seconds: 'Seconds unlocked. Welcome to absolute precision.',
     pack:    'Complete Pack activated. Hour, minutes, seconds: you know everything. Well, everything that is for sale.',
-    refresh: 'Time updated. The previous one keeps sentimental value.'
+    refresh: 'Time updated. The previous one keeps sentimental value.',
+    unlimited: 'Subscription active. The time now flows. Allegedly. Refreshes are included.'
   };
 
   var FALLBACK_ZONES = [
@@ -115,6 +117,9 @@
       } else {
         box.appendChild(el('p', 'fine', 'No time has been purchased on this device. Yours is waiting.'));
       }
+      if (state.owned.unlimited) {
+        box.appendChild(el('p', 'fine', 'Unlimited subscriber detected. The time itself is still sold separately.'));
+      }
       var p = el('p'); p.style.marginTop = '1.2rem';
       var cta = el('a', 'btn btn-ghost', 'See the pricing');
       cta.href = '#tarifs';
@@ -134,7 +139,8 @@
 
     var chosen = !!(state.owned.city && state.prefTz && state.prefTz === state.tz);
     box.appendChild(el('p', 'coffre-city',
-      (chosen ? 'Your city: ' : 'City assigned by the roulette: ') + '📍 ' + lab.label));
+      (chosen ? 'Your city: ' : 'City assigned by the roulette: ') + '📍 ' + lab.label +
+      (state.owned.unlimited ? ' · ∞ Unlimited subscriber' : '')));
 
     var disp = el('div', 'time-display');
     var segs = [['hour', 'hours', tp.h], ['minutes', 'min', tp.m], ['seconds', 'sec', tp.s]];
@@ -161,7 +167,8 @@
 
     if (state.owned.hour && state.owned.minutes && state.owned.seconds) {
       var pr = el('p'); pr.style.marginTop = '1rem';
-      var up = el('button', 'btn btn-ghost', 'Refresh the time (' + fmtPrice('refresh') + ')');
+      var up = el('button', 'btn btn-ghost',
+        state.owned.unlimited ? 'Refresh the time (included)' : 'Refresh the time (' + fmtPrice('refresh') + ')');
       up.type = 'button';
       up.setAttribute('data-buy', 'refresh');
       pr.appendChild(up);
@@ -386,10 +393,10 @@
   /* ---------- Purchases ---------- */
 
   function buyFlow(item) {
+    if (item === 'refresh' && state.owned.unlimited) { grant('refresh'); return; }
     var link = LINKS[item] || (item === 'refresh' ? LINKS.pack : '');
     if (!CFG.demo && link) {
-      window.open(link, '_blank');
-      toast('External payment. Your unlock happens when you come back.');
+      window.location.href = link;
       return;
     }
     demoCheckout(item).then(function (ok) { if (ok) grant(item); });
@@ -492,7 +499,7 @@
     startFakeTimers();
 
     var u = new URLSearchParams(location.search).get('unlock');
-    var valid = { hour: 1, minutes: 1, seconds: 1, pack: 1, city: 1, refresh: 1 };
+    var valid = { hour: 1, minutes: 1, seconds: 1, pack: 1, city: 1, refresh: 1, unlimited: 1 };
     if (u && valid[u]) {
       grant(u);
       try { history.replaceState(null, '', location.pathname); } catch (e) {}

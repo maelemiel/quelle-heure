@@ -165,6 +165,16 @@ h2::after {
 .card .desc { color: var(--muted); font-size: .92rem; flex: 1; }
 
 .featured { border-top: 3px solid var(--red-swiss); }
+
+.card.sub { border-style: dashed; }
+.subtag {
+  position: absolute; top: -10px; right: 12px;
+  background: var(--surface-2); border: 1px solid var(--line-2);
+  color: var(--muted); font-size: .65rem; font-weight: 700;
+  padding: .1rem .5rem; border-radius: 999px;
+  text-transform: uppercase; letter-spacing: .12em;
+}
+.card .price .per { font-size: .95rem; color: var(--muted); margin-left: .25rem; }
 .badge {
   position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
   background: var(--red); color: #0B0B0D;

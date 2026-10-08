@@ -1,0 +1,4 @@
+# QuelLeHeure - keep secrets out of the public repo
+.env
+.env.*
+*.local.js
