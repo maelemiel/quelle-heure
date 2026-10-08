@@ -93,7 +93,11 @@
   function priceOf(k) { return PRICES[k] || '1.00'; }
   function fmtPrice(k) { return '€' + priceOf(k); }
   function randomZone() { return ZONES[Math.floor(Math.random() * ZONES.length)]; }
-  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var osReduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function motionOff() {
+    if (osReduceMotion) return true;
+    try { return localStorage.getItem('trn_noanim') === '1'; } catch (e) { return false; }
+  }
 
   var toastTimer = null;
   function toast(msg) {
@@ -132,7 +136,7 @@
         var delta = (target - (angle % 360) + 360) % 360;
         angle += 5 * 360 + delta;
         rotor.style.transform = 'rotate(' + angle + 'deg)';
-        setTimeout(done || function () {}, reduceMotion ? 50 : 4600);
+        setTimeout(done || function () {}, motionOff() ? 50 : 4600);
       }
     };
   }
@@ -147,7 +151,7 @@
     }
     return {
       run: function (finals, glyphs, done) {
-        if (reduceMotion) {
+        if (motionOff()) {
           els.forEach(function (r, i) { r.textContent = finals[i]; });
           if (done) done();
           return;
@@ -178,7 +182,7 @@
     container.appendChild(d2);
     return {
       roll: function (tens, units, done) {
-        if (reduceMotion) {
+        if (motionOff()) {
           d1.textContent = tens;
           d2.textContent = units;
           if (done) done();
@@ -222,7 +226,7 @@
           c.disabled = true;
           if (!announced) {
             announced = true;
-            if (!reduceMotion) setTimeout(onDraw, 600); else onDraw();
+            if (!motionOff()) setTimeout(onDraw, 600); else onDraw();
           }
         });
         fan.appendChild(c);
@@ -792,7 +796,25 @@
     if (g) runGame(g.getAttribute('data-game'));
   });
 
+  function initAnimToggle() {
+    var btn = $('#anim-toggle');
+    if (!btn) return;
+    var off = false;
+    try { off = localStorage.getItem('trn_noanim') === '1'; } catch (e) {}
+    btn.setAttribute('aria-pressed', off ? 'true' : 'false');
+    btn.textContent = off ? 'ANIM: OFF' : 'ANIM: ON';
+    document.documentElement.classList.toggle('no-anim', off);
+    btn.addEventListener('click', function () {
+      var now = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', now ? 'true' : 'false');
+      btn.textContent = now ? 'ANIM: OFF' : 'ANIM: ON';
+      document.documentElement.classList.toggle('no-anim', now);
+      try { localStorage.setItem('trn_noanim', now ? '1' : '0'); } catch (e) {}
+    });
+  }
+
   function init() {
+    initAnimToggle();
     initDaily();
     renderDailyStatus();
     render();

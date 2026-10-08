@@ -7,7 +7,7 @@
 <meta name="description" content="The world's most honest casino. One card for the hour (24 cards, one truth), a slot machine for the minutes, the croupier's dice for the seconds, a real roulette for your city. From €1. One free pull a day.">
 <meta name="theme-color" content="#0F3D2E">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎴</text></svg>">
-<link rel="stylesheet" href="style.css?v=9">
+<link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
 <a class="skip" href="#coffre">Skip to your table</a>
@@ -21,6 +21,7 @@
     <a href="#faq">house rules</a>
     <a href="about.html">about</a>
   </nav>
+  <button class="anim-toggle mono" id="anim-toggle" type="button" aria-pressed="false">ANIM: ON</button>
 </header>
 
 <main>
@@ -82,7 +83,7 @@
   <h2>The free pull</h2>
   <p class="offer">One free pull per day. No stake, no purchase necessary. The house can afford one generous machine.</p>
   <div class="panel daily">
-    <div id="daily-reels" class="slot" aria-live="polite"></div>
+    <div id="daily-reels" class="slot"></div>
     <p><button class="chip chip-s" id="daily-spin" type="button">PULL, FREE</button></p>
     <p class="fine mono" id="daily-status">published odds, because we are honest people: 50% nothing · 25% the hour · 15% hour + minutes · 10% the complete hand. winnings expire at midnight, like everything.</p>
   </div>
@@ -149,6 +150,10 @@
     <p>No. The card, the reels and the dice reveal your time. They do not decide it. This is a casino the way a candle is a fire: ceremonially.</p>
   </details>
   <details>
+    <summary>Can I turn off the animations?</summary>
+    <p>Yes. The ANIM toggle in the header stops every wheel, reel and card on the spot. Your system's reduced-motion setting is also respected automatically, no toggle needed.</p>
+  </details>
+  <details>
     <summary>Where does the money go?</summary>
     <p>See the <a href="about.html">About page</a>. Short version: it funds ALLY, an accessibility project that does the opposite of this website.</p>
   </details>
@@ -173,7 +178,7 @@
     </div>
     <p class="roulette-city" id="roulette-city" aria-live="off"></p>
     <p class="roulette-time mono" id="roulette-time"></p>
-    <button class="chip" id="roulette-accept" type="button" hidden></button>
+    <button class="chip" id="roulette-accept" type="button" hidden>Confirm</button>
     <p class="fine mono">any complaint will be handled with the seriousness it deserves.</p>
   </div>
 </div>
@@ -184,7 +189,7 @@
   <p class="noscript">without JavaScript, time still passes. enjoy: it's free.</p>
 </noscript>
 
-<script src="config.js?v=9"></script>
-<script src="app.js?v=9"></script>
+<script src="config.js?v=10"></script>
+<script src="app.js?v=10"></script>
 </body>
 </html>

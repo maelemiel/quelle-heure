@@ -40,6 +40,25 @@ body.noscroll { overflow: hidden; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 
+/* Manual animation toggle (WCAG 2.2.4 / 2.3.3): same kill switch as the OS setting */
+html.no-anim *, html.no-anim *::before, html.no-anim *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+.anim-toggle {
+  background: transparent;
+  border: 1px solid rgba(232, 193, 112, .5);
+  color: var(--muted);
+  font-size: .72rem; letter-spacing: .08em;
+  padding: .2rem .55rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.anim-toggle:hover { color: var(--cream); border-color: var(--gold); }
+.anim-toggle[aria-pressed="true"] { color: var(--gold); border-color: var(--gold); }
+
 :focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 ::selection { background: var(--gold); color: var(--ink); }
 
@@ -73,6 +92,17 @@ body.noscroll { overflow: hidden; }
   font-family: var(--sans); font-size: .85rem; letter-spacing: .06em;
 }
 .marquee-nav a:hover { color: var(--cream); text-decoration: underline; }
+.anim-toggle {
+  background: transparent;
+  border: 1px solid rgba(232, 193, 112, .5);
+  color: var(--muted);
+  font-size: .72rem; letter-spacing: .08em;
+  padding: .2rem .55rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.anim-toggle:hover { color: var(--cream); border-color: var(--gold); }
+.anim-toggle[aria-pressed="true"] { color: var(--gold); border-color: var(--gold); }
 
 /* ---------- entrance (hero) ---------- */
 
