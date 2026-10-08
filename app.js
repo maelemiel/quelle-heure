@@ -248,6 +248,13 @@
   };
 
   function todayStr() { return new Date().toDateString(); }
+  function countdownToMidnight() {
+    var now = new Date();
+    var mid = new Date(now); mid.setHours(24, 0, 0, 0);
+    var ms = Math.max(0, mid - now);
+    var h = Math.floor(ms / 3600000), m = Math.floor((ms % 3600000) / 60000);
+    return 'expires in ' + h + 'h ' + (m < 10 ? '0' : '') + m + 'm';
+  }
   function dailyActive() { return !!(state.daily && state.daily.d === todayStr() && state.daily.prize); }
   function effectiveOwned(key) {
     if (state.owned[key]) return true;
@@ -399,9 +406,11 @@
       ' at ' + d.toLocaleTimeString('en-GB') + '. Non-modifiable (that is the point).'));
 
     var chosen = !!(state.owned.city && state.prefTz && state.prefTz === state.tz);
-    box.appendChild(el('p', 'coffre-city',
-      (chosen ? 'Your city: ' : 'The wheel chose: ') + '📍 ' + lab.label +
+    var cityLine = el('p', 'coffre-city');
+    cityLine.appendChild(el('span', 'tag ' + (chosen ? 'tag-owned' : 'tag-wheel'), chosen ? 'YOUR CITY' : "WHEEL'S CHOICE"));
+    cityLine.appendChild(document.createTextNode(' 📍 ' + lab.label +
       (state.owned.unlimited ? ' · ∞ Unlimited player' : '')));
+    box.appendChild(cityLine);
 
     var gamePending = ['hour', 'minutes', 'seconds'].some(function (k) { return effectiveOwned(k) && !state.drawn[k]; });
     if (gamePending) {
@@ -419,6 +428,14 @@
         var seg = el('div', 'seg');
         seg.appendChild(el('span', 'digits', val));
         seg.appendChild(el('span', 'unit', unit));
+        if (state.owned[key]) {
+          seg.appendChild(el('span', 'tag tag-owned', 'PERMANENT'));
+        } else {
+          var dt = el('span', 'tag tag-daily', 'DAILY · ');
+          var dx = el('span', 'tag-exp', countdownToMidnight());
+          dt.appendChild(dx);
+          seg.appendChild(dt);
+        }
         disp.appendChild(seg);
       } else if (effectiveOwned(key)) {
         var gb = el('button', 'chip chip-s', GAME_META[key].action);
@@ -444,7 +461,7 @@
     box.appendChild(el('p', 'fine', 'Time frozen at the instant of purchase. Time itself moved on without you.'));
     var dailyBoost = ['hour', 'minutes', 'seconds'].some(function (k) { return effectiveOwned(k) && !state.owned[k]; });
     if (dailyBoost) {
-      box.appendChild(el('p', 'fine', 'Includes daily winnings. They expire at midnight, like everything else.'));
+      box.appendChild(el('p', 'fine', 'Daily winnings are marked. They expire at midnight, like everything else.'));
     }
 
     if (state.owned.hour && state.owned.minutes && state.owned.seconds) {
@@ -813,8 +830,15 @@
     });
   }
 
+  function startCountdown() {
+    setInterval(function () {
+      $$('.tag-exp').forEach(function (t) { t.textContent = countdownToMidnight(); });
+    }, 30000);
+  }
+
   function init() {
     initAnimToggle();
+    startCountdown();
     initDaily();
     renderDailyStatus();
     render();
