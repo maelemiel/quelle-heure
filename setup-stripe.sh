@@ -70,7 +70,16 @@ for key, name, cents, desc, interval in ITEMS:
         link_params['invoice_creation[enabled]'] = 'true'
     link = call('POST', '/payment_links', link_params, 'qh-%s-link-%s' % (key, link_ver))
     print('%s -> %s' % (key, link['url']))
-    src = re.sub(r"(  %s:\\s*)'[^']*',\\s*$" % key, lambda m: m.group(1) + "'" + link['url'] + "',", src, count=1)
+    # wire ONLY inside the paymentLinks section: prices share the same key names
+    head, sep, tail = src.partition('paymentLinks:')
+    if not sep:
+        print('WIRING FAILED: no paymentLinks section in config.js')
+        sys.exit(1)
+    new_tail, n = re.subn(r"(\s+%s:\s*)'[^']*'\s*,?\s*$" % key, lambda m: m.group(1) + "'" + link['url'] + "',", tail, count=1, flags=re.M)
+    if n != 1:
+        print('WIRING FAILED for %r: regex matched nothing in paymentLinks section' % key)
+        sys.exit(1)
+    src = head + sep + new_tail
 
 open(CONFIG, 'w').write(src)
 print()
